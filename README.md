@@ -2,7 +2,8 @@
 
 An interactive, single-page "garage" for my 2026 BMW X5 xDrive40i (Jet Black, Cognac leather): a rotatable 3D model plus spec explainers and upgrade planning.
 
-Live artifact: https://claude.ai/artifact/1wDygTR3GY9bFqhSabUSDU
+Live site: https://kartik2112.github.io/bmw-x5-garage/  
+Claude artifact: https://claude.ai/artifact/1wDygTR3GY9bFqhSabUSDU
 
 ## What's inside
 
@@ -42,6 +43,6 @@ three.js r170 loads from the jsDelivr CDN.
 
 ## Credits
 
-3D model: "2024 BMW X5 xDrive40i" by [ddiaz-design](https://sketchfab.com/3d-models/b453ba441ff04f9290955d09c3d46b9f) on Sketchfab, licensed **CC BY-NC-SA 4.0**. It has been compressed and restyled (Jet Black paint, Cognac leather, black steering wheel, M fender badges removed, split tailgate added). Under the license, this repository is for personal, non-commercial use, and any derivative must be shared under the same license.
+3D model: "2024 BMW X5 xDrive40i" by [ddiaz-design](https://sketchfab.com/3d-models/b453ba441ff04f9290955d09c3d46b9f) on Sketchfab, licensed **CC BY-NC-SA 4.0**. It has been compressed and restyled (Jet Black paint, Cognac leather, black steering wheel, M fender badges removed, split tailgate added). Under the license, the model may only be used non-commercially, and any derivative must be shared under the same license.
 
 BMW and X5 are trademarks of BMW AG. This is a personal, unofficial project.
