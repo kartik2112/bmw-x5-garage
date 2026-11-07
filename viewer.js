@@ -117,10 +117,10 @@ export async function createViewer(host, opts={}){
   const center=cb.getCenter(new THREE.Vector3());
   // state & animation
   const anim={hood:0,trunk:0,lgate:0,FL:0,FR:0,BL:0,BR:0,roof:0}; const tgt={...anim}; let spin=0,lights='off';
-  const VIEWS={driver:[-0.05,1.22,-0.40],front:[6.2,1.6,4.2],side:[0.2,1.3,8.4],rear:[-6.2,1.9,4.4],top:[0.01,10,0.01],engine:[5.4,3.4,0.01],cargo:[-6,2.4,0.6],lights:[6.0,1.0,0.01],wheel:[3.2,0.9,4.8],cabin:[0.6,3.2,5.6]};
-  const TGT={driver:[0.95,0.62,-0.33],front:[0,0.7,0],side:[0,0.8,0],rear:[0,0.8,0],top:[0,0,0],engine:[1.6,0.9,0],cargo:[-2,0.9,0],lights:[1,0.7,0],wheel:[1.45,0.4,0.9],cabin:[0,1,0]};
+  const VIEWS={driver:[-0.16,1.24,-0.40],front:[6.2,1.6,4.2],side:[0.2,1.3,8.4],rear:[-6.2,1.9,4.4],top:[0.01,10,0.01],engine:[5.4,3.4,0.01],cargo:[-6,2.4,0.6],lights:[6.0,1.0,0.01],wheel:[3.2,0.9,4.8],cabin:[0.6,3.2,5.6]};
+  const TGT={driver:[-0.13,1.235,-0.40],front:[0,0.7,0],side:[0,0.8,0],rear:[0,0.8,0],top:[0,0,0],engine:[1.6,0.9,0],cargo:[-2,0.9,0],lights:[1,0.7,0],wheel:[1.45,0.4,0.9],cabin:[0,1,0]};
   let fly=null;
-  function view(name,dur=1100){if(!placed)return;const inside=name==='driver';controls.minDistance=inside?0.05:4;controls.maxPolarAngle=inside?Math.PI*0.75:Math.PI*0.495;const t=new THREE.Vector3(...TGT[name]);const k=inside?1:Math.max(1,1.15/camera.aspect);const p=new THREE.Vector3(...VIEWS[name]).sub(t).multiplyScalar(k).add(t);fly={p0:camera.position.clone(),t0:controls.target.clone(),p,t,s:performance.now(),d:dur}}
+  function view(name,dur=1100){if(!placed)return;const inside=name==='driver';controls.minDistance=inside?0.01:4;controls.maxDistance=inside?0.05:26;controls.minPolarAngle=inside?Math.PI*0.2:0;controls.maxPolarAngle=inside?Math.PI*0.8:Math.PI*0.495;controls.rotateSpeed=inside?-0.45:1;controls.enableZoom=!inside;if(inside)controls.autoRotate=false;camera.near=inside?0.02:0.1;camera.fov=inside?62:32;camera.updateProjectionMatrix();const t=new THREE.Vector3(...TGT[name]);const k=inside?1:Math.max(1,1.15/camera.aspect);const p=new THREE.Vector3(...VIEWS[name]).sub(t).multiplyScalar(k).add(t);fly={p0:camera.position.clone(),t0:controls.target.clone(),p,t,s:performance.now(),d:dur}}
   controls.target.set(...TGT.front);
   function setLights(m){lights=m;const on=m!=='off';
     headMeshes.forEach(x=>{x.material.emissive.set(0xf2f7ff);x.material.emissiveIntensity=!on?0:m==='drl'?4:m==='low'?7:9});

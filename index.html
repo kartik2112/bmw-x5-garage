@@ -956,7 +956,7 @@ function setL(m){window._lm=m;window.V&&V.setLights(m);syncLightBtn()}
 function setScene(m){scene3=m;const v=$('#viewer');v.classList.toggle('night',m==='night');v.classList.toggle('dusk',m==='dusk');window.V&&V.setNight(m==='night');const b=document.querySelector('.vb[data-a="scene"]');b.textContent={studio:'Studio',night:'Night',dusk:'Golden hr'}[m]}
 function setPart(k,on){if(!window.V)return;if(k==='doors'){['FL','FR','BL','BR'].forEach(d=>V.toggle(d,on))}else V.toggle(k,on);vState[k]=on?1:0;const b=document.querySelector(`.vb[data-a="${k}"]`);b&&b.classList.toggle('on',!!on)}
 function closeExcept(keep=[]){if(!window.V)return;['hood','trunk','lgate','doors'].forEach(k=>{if(!keep.includes(k))setPart(k,0)});if(!keep.includes('roof')){V.toggle('roof',0);const r=document.querySelector('.vb[data-a="roof"]');if(r){r.classList.remove('on');r.textContent='Sky roof'}}}
-function setView(v){window.V&&V.view(v);$$('#vviews button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
+function setView(v){const hs=document.getElementById('hots');if(hs)hs.style.display=v==='driver'?'none':'';window.V&&V.view(v);$$('#vviews button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
 $$('#vviews button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
 $$('.vb').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(!window.V)return;
   if(a==='closeall'){closeExcept();setView('front');toast('All closed');return}
