@@ -53,7 +53,7 @@ export async function createViewer(host, opts={}){
   root.rotation.y=yaw; root.updateMatrixWorld(true);
   // materials
   const paint=new THREE.MeshPhysicalMaterial({color:0x010102,metalness:0.0,roughness:0.14,clearcoat:1,clearcoatRoughness:0.03,envMapIntensity:0.3});
-  const cognac=new THREE.Color(opts.leather||0x8c5a3c);
+  const cognac=new THREE.Color(opts.leather||0x9a6a4c);
   const mats={};
   car.traverse(o=>{if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;const m=o.material;const nm=(m.name||'');mats[nm]=(mats[nm]||0)+1;
     if(/CARPAINT/i.test(nm)){o.material=paint}
@@ -102,7 +102,7 @@ export async function createViewer(host, opts={}){
   // cognac leather lives in textured interior materials: pull the model's orange-gold towards real Cognac (less saturated, slightly redder)
   {const done=new Set();car.traverse(o=>{if(!o.isMesh)return;const m=o.material;if(!/^(INT_A|grille|Fabric)$/.test(m.name||'')||done.has(m))return;done.add(m);
     if(o.getWorldPosition(new THREE.Vector3()).y<0.3&&m.name==='grille')return;
-    m.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n{float l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));vec3 d=mix(vec3(l),diffuseColor.rgb,0.62);diffuseColor.rgb=d*vec3(1.0,0.9,0.86);}')};m.needsUpdate=true})}
+    m.customProgramCacheKey=()=>'cog_'+m.name;const remap=m.name==='grille'?'if(diffuseColor.r>diffuseColor.b+0.08){float lb=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));diffuseColor.rgb=vec3(0.706,0.380,0.180)*(lb/0.30);}':'';m.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n'+remap+'{float l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));vec3 d=mix(vec3(l),diffuseColor.rgb,0.62);diffuseColor.rgb=d*vec3(1.0,0.9,0.86);}')};m.needsUpdate=true})}
   // calipers: 2026 X5 xDrive40i standard brakes have dark grey calipers (the model shipped with blue M Sport calipers)
   (parts.Caliper||[]).forEach(c=>c.traverse(o=>{if(!o.isMesh)return;const col=o.material.color;if(!col)return;const hsl={};col.getHSL(hsl);if(hsl.s>0.25&&hsl.h>0.5&&hsl.h<0.75||o.material.map){o.material=o.material.clone();if(o.material.map&&!(hsl.s>0.25)){o.material.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n{float l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));if(diffuseColor.b>diffuseColor.r*1.3)diffuseColor.rgb=vec3(l*0.55);}')}}else{o.material.color=new THREE.Color(0x2b2d31)}}}));
   // steering wheel: paint over the M Sport badge in the shared interior texture (non-M sport wheel)
