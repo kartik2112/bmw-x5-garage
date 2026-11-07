@@ -494,7 +494,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
   </div>
 </div>
 <div class="card mt">
-    <div class="row between"><h3>How each tire handles the temperature</h3><span class="mono" id="tempT" style="color:var(--gold2)">55°F</span></div>
+    <div class="row between"><h3>How each tire handles the temperature</h3><span class="mono" id="tempT" style="color:var(--gold2)">55°F (13°C)</span></div>
     <input type="range" id="temp" min="10" max="95" value="55">
     <div class="verdict" id="tempV"></div>
     <div id="tempTable" class="mt"></div>
@@ -782,7 +782,7 @@ function tempVerdict(k,v){
  if(k==='as')return v>=40?['ok','Good']:v>=20?['ok','OK · light snow']:['warn','Marginal on snow/ice'];
  return v>=60?['warn','Works · wears fast']:v>=45?['ok','Good']:['ok','Best']}
 function renderTempTable(v){const t=$('#tempTable');if(!t)return;t.innerHTML=TEMPDATA.map(d=>{const [c,l]=tempVerdict(d.k,v);return `<div class="row between" style="padding:9px 0;border-bottom:1px solid var(--line);flex-wrap:nowrap;align-items:flex-start;gap:10px"><div><div style="font-weight:600;font-size:13px">${d.n}</div><div class="muted" style="font-size:11px">${d.r}</div><div class="dim" style="font-size:11px;margin-top:2px">${d.note}</div></div><span class="pill ${c}" style="flex:none">${l}</span></div>`}).join('')}
-function renderTemp(v){renderTempTable(v);$('#tempT').textContent=v+'°F';const el=$('#tempV');
+function renderTemp(v){renderTempTable(v);$('#tempT').textContent=v+'°F ('+Math.round((v-32)*5/9)+'°C)';const el=$('#tempV');
  if(v<45){el.className='verdict bad';el.innerHTML=`<b>Below 45°F (7°C): summer tires stop working well.</b> The tread compound hardens and grip drops on both dry and wet roads. Near freezing the rubber can crack, and on snow or ice these tires are dangerous. That covers most of Tahoe from November to March, so you'll want winter tires or a separate winter set.`}
  else if(v<55){el.className='verdict warn';el.innerHTML=`<b>Borderline.</b> The P Zeros will work, but grip in the wet is falling off. Bay Area winter mornings often sit here.`}
  else{el.className='verdict ok';el.innerHTML=`<b>Summer tires are in their element.</b> They grip and brake best from here up. Normal Bay Area weather for most of the year.`}}
