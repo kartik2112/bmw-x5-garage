@@ -240,6 +240,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
 #tsvg .dl{opacity:0;transition:opacity .45s}#tsvg .dl.on{opacity:1}
 .tnav{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
 @keyframes slideIn{from{transform:translateY(120px);opacity:0}to{transform:none;opacity:1}}
+.buy{display:inline-block;margin:6px 0 0 6px;font-size:11px;padding:4px 9px;border-radius:999px;border:1px solid #b8733f88;color:#e3b384;text-decoration:none}.buy:hover{background:#b8733f33}
 </style>
 </head>
 <body>
@@ -525,7 +526,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
     <div class="foot">Simplified from Caltrans rules. Whatever the control level, CHP can require chains, and you're required to carry them in a chain-control area.</div>
   </div>
   <div class="row mt2 between"><h3>Chains for 315/35R21</h3>
-    <div class="seg" id="chainF"><button data-cf="all" class="on">All</button><button data-cf="ok">Confirmed fit</button><button data-cf="no">Won't fit</button></div></div>
+    <div class="seg" id="chainF"><button data-cf="all">All</button><button data-cf="ok" class="on">Confirmed fit</button><button data-cf="no">Won't fit</button></div></div>
   <div class="grid mt" id="chainList"></div>
   <details class="sources"><summary>Sources</summary><ul><li>Your project notes: <i>Snow traction for the X5 on 21″ wheels</i> (checked Nov 5, 2026), using etrailer, Peerless, König and AutoSock fit charts plus Amazon, Walmart and O'Reilly listings.</li><li><a href="https://claude.ai/artifact/GJHFrWf8GXRV8PPrBSdmMP">Earlier interactive chain comparison</a></li></ul></details>
 </section>
@@ -748,7 +749,7 @@ const SPECS=[
  ['Dimensions','Length','194.2 in','BMW USA'],['Dimensions','Width','78.9 in','BMW USA'],['Dimensions','Height','69.5 in','BMW USA'],['Dimensions','Wheelbase','117.1 in (2,975 mm)','BMW press'],['Dimensions','Ground clearance','8.3 in','iSeeCars'],['Dimensions','Curb weight','4,998 lb','Edmunds'],
  ['Cabin','Seating','5 · 40/20/40 split rear','CarGurus'],['Cabin','Front / rear legroom','39.8 / 37.4 in','BMW dealer'],['Cabin','Front / rear headroom','40.8 / 38.7 in','Dealer listing'],['Cabin','Displays','12.3″ cluster + 14.9″ touchscreen (Curved Display)','CarGurus'],
  ['Electrical','12V battery','Under the cargo floor; jump post in the engine bay','BMW press'],['Lighting','Headlights','Adaptive full LED (std from MY25)','Carvana / dealers'],
- ['Wheels','Your tires','F 275/40R21 107Y XL · R 315/35R21 111Y XL','Your car'],['Pricing','Starting MSRP','$68,600 (before destination)','Edmunds / Cars.com']];
+ ['Wheels','Your tires','F 275/40R21 107Y XL · R 315/35R21 111Y XL','Your car']];
 function renderSpecs(q=''){q=q.toLowerCase();let last='',h='';SPECS.filter(s=>s.join(' ').toLowerCase().includes(q)).forEach(s=>{if(s[0]!==last){h+=`<tr><td colspan="3" style="padding-top:16px;border:0"><span class="k" style="color:var(--gold)">${s[0]}</span></td></tr>`;last=s[0]}h+=`<tr><td class="muted">${s[1]}</td><td>${s[2]}</td><td class="r dim">${s[3]}</td></tr>`});$('#specBody').innerHTML=h||'<tr><td class="muted">No match.</td></tr>'}
 $('#specQ').oninput=e=>renderSpecs(e.target.value);
 
@@ -829,14 +830,15 @@ const CAT={
   {id:'b-fm1',g:'used',n:'Burton padded board bag (Campbell)',p:60,q:'$60 FB Marketplace',fit:'ok',tag:'Local pickup',m:'Local pickup in Campbell.'},
   {id:'b-fm2',g:'used',n:'Dakine Tour 165 cm (San Jose)',p:75,q:'$75 FB Marketplace',fit:'ok',tag:'Local pickup',m:'Local pickup in San Jose.'},
   {id:'b-fm3',g:'used',n:'Athalon Double Ski & Snowboard Bag',p:76,q:'$76 shipped',fit:'ok',tag:'Holds 2',m:'Shipped.'}]};
+const LINKS={"c-ks": [["etrailer", "https://www.etrailer.com/search.aspx?search=Konig+K-Summit+XXL+K67"]], "c-pw": [["Pewag", "https://www.pewag.com/en/snow-chains/servostar-suv"]], "c-z6": [["Amazon", "https://www.amazon.com/s?k=SCC+Peerless+Super+Z6+SZ451"], ["Walmart", "https://www.walmart.com/search?q=Super+Z6+SZ451"]], "c-xg": [["K\u00f6nig", "https://www.konigchain.com/"], ["Amazon", "https://www.amazon.com/s?k=Konig+XG-12+Pro+266"]], "c-as": [["Amazon", "https://www.amazon.com/s?k=AutoSock+HP860"]], "c-is": [["O'Reilly", "https://www.oreillyauto.com/search?q=isse+snow+socks"]], "c-sp": [["Amazon", "https://www.amazon.com/s?k=Spikes-Spider+Sport+snow+chain"]], "s-a": [["Amazon", "https://www.amazon.com/dp/B0C52PFPL9"]], "s-b": [["Amazon", "https://www.amazon.com/dp/B0DSK8MQ6K"]], "s-c": [["Amazon", "https://www.amazon.com/dp/B0DSCJPTPZ"]], "b-bmw": [["Leebmann24", "https://www.leebmann24.com/en/search?search=51472209121"], ["eBay", "https://www.ebay.com/sch/i.html?_nkw=BMW+51472209121"]], "b-kf": [["Walmart", "https://www.walmart.com/search?q=KFFKFF+double+snowboard+bag"]], "b-om": [["Amazon", "https://www.amazon.com/dp/B0FJ8GFC9W"]], "b-at": [["Amazon", "https://www.amazon.com/dp/B07X3MMRLX"]], "b-wo": [["Amazon", "https://www.amazon.com/dp/B0BKQ6CX6T"]], "b-dk": [["Amazon", "https://www.amazon.com/s?k=Dakine+Low+Roller+snowboard+bag"]], "b-sl": [["Amazon", "https://www.amazon.com/s?k=snowboard+sleeve+cover"]], "b-li": [["Amazon", "https://www.amazon.com/s?k=BMW+X5+2019-2026+cargo+liner+backrest+mat"]], "b-wt": [["WeatherTech", "https://www.weathertech.com/search/?q=SPB202"]]};
 const ALL={};Object.entries(CAT).forEach(([k,a])=>a.forEach(i=>{i.cat=k;ALL[i.id]=i}));
 store.build=store.build||[];
 function itemHTML(i){const sel=store.build.includes(i.id);const fitP={ok:'<span class="pill ok">fits</span>',warn:'<span class="pill warn">check</span>',no:'<span class="pill bad">no</span>'}[i.fit];
- return `<div class="item ${sel?'sel':''}" data-id="${i.id}"><div><div class="row" style="gap:8px">${fitP}<span class="pill info">${i.tag}</span></div><h4 style="margin-top:8px">${i.n}</h4></div><div><div class="price">${i.q}</div>${i.fit!=='no'?`<button class="add">${sel?'✓ In build':'+ Add'}</button>`:''}</div><div class="meta">${i.m}${i.x?' <a href="#" class="more">More ›</a>':''}</div>${i.x?`<div class="expand">${i.x}</div>`:''}</div>`}
+ return `<div class="item ${sel?'sel':''}" data-id="${i.id}"><div><div class="row" style="gap:8px">${fitP}<span class="pill info">${i.tag}</span></div><h4 style="margin-top:8px">${i.n}</h4></div><div><div class="price">${i.q}</div>${(LINKS[i.id]||[]).map(l=>`<a class="buy" href="${l[1]}" target="_blank" rel="noopener">${l[0]} ↗</a>`).join('')}${i.fit!=='no'?`<button class="add">${sel?'✓ In build':'+ Add'}</button>`:''}</div><div class="meta">${i.m}${i.x?' <a href="#" class="more">More ›</a>':''}</div>${i.x?`<div class="expand">${i.x}</div>`:''}</div>`}
 function bindItems(root){root.querySelectorAll('.item').forEach(el=>{const a=el.querySelector('.add');if(a)a.onclick=e=>{e.stopPropagation();toggleBuild(el.dataset.id)};const m=el.querySelector('.more');if(m)m.onclick=e=>{e.preventDefault();el.classList.toggle('open')}})}
 function toggleBuild(id){const b=store.build;const i=b.indexOf(id);if(i>=0)b.splice(i,1);else{b.push(id);toast('Added to build · '+ALL[id].n)}save();refreshLists();updCount()}
 function updCount(){$('#buildCount').textContent=store.build.length?'· '+store.build.length:''}
-let chainFilter='all',gearFilter='all';
+let chainFilter='ok',gearFilter='all';
 function refreshLists(){
  $('#tireList').innerHTML=CAT.tires.map(itemHTML).join('');bindItems($('#tireList'));
  $('#chainList').innerHTML=CAT.chains.filter(i=>chainFilter==='all'||(chainFilter==='ok'?i.fit==='ok':i.fit==='no')).map(itemHTML).join('');bindItems($('#chainList'));

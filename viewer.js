@@ -124,14 +124,18 @@ export async function createViewer(host, opts={}){
   const VIEWS={driver:[-0.16,1.24,-0.40],front:[6.2,1.6,4.2],side:[0.2,1.3,8.4],rear:[-6.2,1.9,4.4],top:[0.01,10,0.01],engine:[5.4,3.4,0.01],cargo:[-6,2.4,0.6],lights:[6.0,1.0,0.01],wheel:[3.2,0.9,4.8],cabin:[0.6,3.2,5.6]};
   const TGT={driver:[-0.13,1.235,-0.40],front:[0,0.7,0],side:[0,0.8,0],rear:[0,0.8,0],top:[0,0,0],engine:[1.6,0.9,0],cargo:[-2,0.9,0],lights:[1,0.7,0],wheel:[1.45,0.4,0.9],cabin:[0,1,0]};
   let fly=null;
-  function view(name,dur=1100){if(!placed)return;const inside=name==='driver';controls.minDistance=inside?0.01:4;controls.maxDistance=inside?0.05:26;controls.minPolarAngle=inside?Math.PI*0.2:0;controls.maxPolarAngle=inside?Math.PI*0.8:Math.PI*0.495;controls.rotateSpeed=inside?-0.45:1;controls.enableZoom=!inside;if(inside)controls.autoRotate=false;camera.near=inside?0.02:0.1;camera.fov=inside?62:32;camera.updateProjectionMatrix();const t=new THREE.Vector3(...TGT[name]);const k=inside?1:Math.max(1,1.15/camera.aspect);const p=new THREE.Vector3(...VIEWS[name]).sub(t).multiplyScalar(k).add(t);fly={p0:camera.position.clone(),t0:controls.target.clone(),p,t,s:performance.now(),d:dur}}
+  function view(name,dur=1100){if(!placed)return;const inside=name==='driver';controls.minDistance=inside?0.01:4;controls.maxDistance=inside?0.05:26;controls.minPolarAngle=inside?Math.PI*0.2:0;controls.maxPolarAngle=inside?Math.PI*0.8:Math.PI*0.495;controls.rotateSpeed=inside?-0.45:1;controls.enableZoom=!inside;insideView=inside;if(inside)controls.autoRotate=false;camera.near=inside?0.02:0.1;camera.fov=inside?62:32;camera.updateProjectionMatrix();const t=new THREE.Vector3(...TGT[name]);const k=inside?1:Math.max(1,1.15/camera.aspect);const p=new THREE.Vector3(...VIEWS[name]).sub(t).multiplyScalar(k).add(t);fly={p0:camera.position.clone(),t0:controls.target.clone(),p,t,s:performance.now(),d:dur}}
   controls.target.set(...TGT.front);
   function setLights(m){lights=m;const on=m!=='off';
     headMeshes.forEach(x=>{x.material.emissive.set(0xf2f7ff);x.material.emissiveIntensity=!on?0:m==='drl'?4:m==='low'?7:9});
     tailMeshes.forEach(x=>{x.material.emissive.set(0xff2414);x.material.emissiveIntensity=on?3:0.6});
     glows.forEach(g=>{g.material.opacity=!on?0:m==='drl'?0.35:m==='low'?0.8:1;g.scale.setScalar(m==="high"?0.5:0.38)});
     beams.forEach(b=>{b.intensity=m==='low'?60:m==='high'?140:0;b.angle=m==='high'?0.32:0.45;b.target.position.y=m==='high'?0.6:-0.5})}
-  let placed=false;function resize(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();if(!placed){placed=true;const t=new THREE.Vector3(...TGT.front);camera.position.set(...VIEWS.front).sub(t).multiplyScalar(Math.max(1,1.15/camera.aspect)).add(t);controls.target.copy(t)}}
+  let placed=false,insideView=false;
+  // in the driver's seat, zoom changes the lens (FOV) so the camera itself never moves
+  const fovZoom=d=>{if(!insideView)return;camera.fov=THREE.MathUtils.clamp(camera.fov+d,28,80);camera.updateProjectionMatrix()};
+  renderer.domElement.addEventListener('wheel',e=>{if(insideView){e.preventDefault();fovZoom(e.deltaY*0.04)}},{passive:false});
+  let pd=0;renderer.domElement.addEventListener('touchmove',e=>{if(insideView&&e.touches.length===2){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);if(pd)fovZoom((pd-d)*0.15);pd=d}},{passive:true});renderer.domElement.addEventListener('touchend',()=>pd=0);function resize(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();if(!placed){placed=true;const t=new THREE.Vector3(...TGT.front);camera.position.set(...VIEWS.front).sub(t).multiplyScalar(Math.max(1,1.15/camera.aspect)).add(t);controls.target.copy(t)}}
   new ResizeObserver(resize).observe(host); resize();
   const hotspots=[]; // {el, obj|vec}
   const hp={engine:()=>bbOf(parts.Hood||[]).getCenter(new THREE.Vector3()).setY(hb.max.y+0.05),
