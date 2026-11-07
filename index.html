@@ -319,23 +319,9 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
         <div class="row"><button class="btn" id="bStart">● Start engine</button><button class="btn" id="bRev" disabled>⤒ Rev it</button><button class="btn sm on" id="bSound">♪ Sound on</button></div>
         <span class="mono muted" style="font-size:11px">FIRING ORDER 1-5-3-6-2-4</span>
       </div>
-      <svg viewBox="0 0 600 260" style="width:100%;margin-top:12px" id="bayTop">
-        <rect x="10" y="10" width="580" height="240" rx="26" fill="#0c0c0e" stroke="#26262a"/>
-        <text x="300" y="34" text-anchor="middle" fill="#5d5a55" font-size="10" font-family="JetBrains Mono" letter-spacing="3">FRONT OF CAR →  (schematic, top view)</text>
-        <!-- engine block -->
-        <rect x="150" y="70" width="300" height="110" rx="14" fill="#1a1a1d" stroke="#3a3a40"/>
-        <g id="cyls"></g>
-        <text x="300" y="200" text-anchor="middle" fill="#8f8a82" font-size="11" font-family="JetBrains Mono" letter-spacing="2">2,998 cc · 82.0 × 94.6 mm · 11.0:1</text>
-        <!-- turbo -->
-        <g class="hot" data-e="turbo" transform="translate(120,150)"><circle r="20" fill="#221a14" stroke="#b8733f"/><circle r="8" fill="#0c0c0e" stroke="#b8733f"/><circle class="r" r="10"/></g>
-        <!-- items -->
-        <g class="hot" data-e="oil" transform="translate(410,58)"><circle r="11" fill="#2a1f17" stroke="#e3b384"/><text x="0" y="4" text-anchor="middle" style="opacity:1;font-size:9px;fill:#e3b384">OIL</text><circle class="r" r="10"/></g>
-        <g class="hot" data-e="coolant" transform="translate(70,70)"><rect x="-22" y="-14" width="44" height="28" rx="6" fill="#132028" stroke="#d9b48f"/><circle class="r" r="10"/></g>
-        <g class="hot" data-e="washer" transform="translate(540,200)"><rect x="-20" y="-16" width="40" height="32" rx="6" fill="#11202a" stroke="#d9b48f"/><circle class="r" r="10"/></g>
-        <g class="hot" data-e="jump" transform="translate(540,70)"><rect x="-14" y="-12" width="28" height="24" rx="4" fill="#2a1311" stroke="#d97a6c"/><text x="0" y="4" text-anchor="middle" style="opacity:1;font-size:12px;fill:#d97a6c">+</text><circle class="r" r="10"/></g>
-        <g class="hot" data-e="mhev" transform="translate(300,236)"><rect x="-60" y="-10" width="120" height="20" rx="10" fill="#1a2030" stroke="#d9b48f"/><text x="0" y="4" text-anchor="middle" style="opacity:1;font-size:9px;fill:#e3b384">48V · 8-SPEED</text></g>
-      </svg>
-      <div class="explain" id="engExplain">Tap a glowing part for what it is and why it matters.</div>
+      <div id="eng3d" style="position:relative;height:320px;margin-top:12px;border-radius:16px;overflow:hidden;background:radial-gradient(110% 90% at 50% 35%,#3a2e25 0%,#1a1512 60%,#0d0b0a 100%)"><div id="eng3dLoad" style="position:absolute;inset:0;display:grid;place-items:center;color:#a89d92;font-size:11px;letter-spacing:.14em">LOADING ENGINE…</div></div>
+      <div class="row mt" id="engChips" style="gap:6px"><button class="btn sm" data-e="turbo">Turbo</button><button class="btn sm" data-e="mhev">48V hybrid</button><button class="btn sm" data-e="oil">Oil</button><button class="btn sm" data-e="coolant">Coolant</button><button class="btn sm" data-e="washer">Washer</button><button class="btn sm" data-e="jump">Jump-start</button></div>
+      <div class="explain" id="engExplain">A see-through inline-six with B58 proportions (82 mm bore, 94.6 mm stroke). Drag to rotate. Start the engine to watch the pistons and crankshaft move: each cylinder flashes as it fires in the B58&#39;s order, 1-5-3-6-2-4. The motion is slowed down so you can follow it.</div>
     </div>
 
     <div class="card">
@@ -651,16 +637,15 @@ $('#stats').innerHTML=STATS.map(s=>`<div class="stat"><span class="lbl">${s[0]}<
 function animStats(){$$('#stats .bar i').forEach(i=>{i.style.width='0';requestAnimationFrame(()=>setTimeout(()=>i.style.width=i.dataset.w+'%',60))})}
 
 /* ---------- ENGINE ---------- */
-const cylG=$('#cyls');let ch='';for(let i=1;i<=6;i++){const x=150+i*43;ch+=`<g><circle id="cy${i}" cx="${x}" cy="125" r="17" fill="#232327" stroke="#3a3a40"/><text x="${x}" y="129" text-anchor="middle" fill="#8f8a82" font-size="11" font-family="JetBrains Mono">${i}</text></g>`}cylG.innerHTML=ch;
 const ENG={turbo:'<b>Twin-scroll turbocharger.</b> The six cylinders feed it as two groups of three, so their exhaust pulses don\'t interfere. That gives quick boost and lets full torque (398 lb-ft) arrive at just 1,850 rpm.',
  oil:'<b>Oil filler.</b> There\'s no dipstick: the car measures oil electronically and shows the level in iDrive (Vehicle status). BMW\'s spec sheet lists about 6.5 L. Use a BMW Longlife-approved oil and confirm the grade with your service advisor.',
  coolant:'<b>Coolant expansion tank.</b> Only open it when the engine is cold. BMW recommends its own coolant.',
  washer:'<b>Washer fluid.</b> Before a Tahoe trip, fill it with a winter mix rated to −20°F or lower; road salt spray goes through fluid quickly.',
  jump:'<b>Jump-start terminal.</b> The 12V battery is under the cargo floor, so the engine bay has a positive post and a ground point for jump leads.',
  mhev:'<b>48V mild hybrid in the 8-speed Steptronic.</b> On the 2024+ X5 the starter-generator is part of the gearbox. It adds a short boost when pulling away, makes auto start-stop smooth, and recovers energy when braking.'};
-$$('#bayTop .hot').forEach(h=>h.onclick=()=>{$('#engExplain').innerHTML=ENG[h.dataset.e];$$('#bayTop .hot').forEach(x=>x.style.opacity=x===h?1:.55)});
+$$('#engChips button').forEach(b=>b.onclick=()=>{$('#engExplain').innerHTML=ENG[b.dataset.e];$$('#engChips button').forEach(x=>x.classList.toggle('on',x===b));window.ENG3D&&ENG3D.highlight(b.dataset.e)});
 // torque model
-function tq(r){if(r<800)return 0;if(r<1850)return 230+(398-230)*(r-800)/1050;if(r<=5000)return 398;if(r<=6250)return Math.min(398,375*5252/r);return 375*5252/6250*(1-(r-6250)/2200)}
+function tq(r){if(r<800)return r>0?230*r/800:0;if(r<1850)return 230+(398-230)*(r-800)/1050;if(r<=5000)return 398;if(r<=6250)return Math.min(398,375*5252/r);return 375*5252/6250*(1-(r-6250)/2200)}
 const hp=r=>tq(r)*r/5252;
 (function drawCurve(){const W=420,H=210,px=r=>30+(r-800)/(6800-800)*(W-50),py=v=>H-28-v/420*(H-50);
  let pt='',ph='';for(let r=800;r<=6800;r+=50){pt+=(r===800?'M':'L')+px(r).toFixed(1)+','+py(tq(r)).toFixed(1);ph+=(r===800?'M':'L')+px(r).toFixed(1)+','+py(hp(r)).toFixed(1)}
@@ -705,13 +690,13 @@ function setRpm(r){const now=performance.now();if(lastRpm>3600&&r<lastRpm-250&&n
   curRpm=r;$('#rpmT').textContent=Math.round(r).toLocaleString();$('#hpT').textContent=Math.round(hp(r));$('#tqT').textContent=Math.round(tq(r));
   const c=$('#cur');c.setAttribute('x1',_px(Math.max(800,r)));c.setAttribute('x2',_px(Math.max(800,r)));audioRpm(r);window.V&&V.setRpm&&V.setRpm(r);
   const bb=$('#boostBar');if(bb)bb.style.width=Math.round(boost*100)+'%';
-  if(running){clearInterval(fireT);const order=[1,5,3,6,2,4];let i=0;const period=Math.max(16,120000/Math.max(r,600)/6);fireT=setInterval(()=>{order.forEach(n=>$('#cy'+n).setAttribute('fill','#232327'));$('#cy'+order[i%6]).setAttribute('fill','#b8733f');i++},period)}
+  window.ENG3D&&ENG3D.setRpm(running?r:0);
   lastRpm=r;lastT=now}
 let revT=null;
 function rampTo(target,ms,done){clearInterval(revT);const r0=curRpm,t0=performance.now();revT=setInterval(()=>{const k=Math.min(1,(performance.now()-t0)/ms);const e=1-Math.pow(1-k,2);const r=r0+(target-r0)*e;setRpm(r);$('#rpm').value=r;if(k>=1){clearInterval(revT);done&&done()}},30)}
 $('#bStart').onclick=()=>{running=!running;const b=$('#bStart');b.classList.toggle('on',running);b.textContent=running?'■ Stop engine':'● Start engine';$('#rpm').disabled=!running;$('#bRev').disabled=!running;
   if(running){if(soundOn)startSound();window.V&&(setPart('hood',1),setView('engine'));curRpm=0;rampTo(1350,500,()=>rampTo(780,900))}
-  else{clearInterval(revT);clearInterval(fireT);rampTo(0,400,()=>{stopSound();$$('#cyls circle').forEach(c=>c.setAttribute('fill','#232327'))})}};
+  else{clearInterval(revT);clearInterval(fireT);rampTo(0,400,()=>{stopSound();window.ENG3D&&ENG3D.setRpm(0)})}};
 $('#bSound').onclick=()=>{soundOn=!soundOn;$('#bSound').textContent=soundOn?'♪ Sound on':'♪ Sound off';$('#bSound').classList.toggle('on',soundOn);if(soundOn&&running)startSound();if(!soundOn)stopSound()};
 $('#bRev').onclick=()=>{if(!running)return;rampTo(6300,850,()=>setTimeout(()=>rampTo(780,1500),120))};
 $('#rpm').oninput=e=>setRpm(+e.target.value);
@@ -992,6 +977,10 @@ const HS={engine:['engine','Engine'],lights:['lights','Lights'],cargo:['cargo','
 <script>
 function showVErr(m){const l=document.getElementById('vload');l.style.display='grid';l.innerHTML='<div style="text-align:center;padding:20px">The 3D model didn\'t load.<br><small style="opacity:.6">'+(m||'').slice(0,100)+'</small><br><button class="vretry" onclick="location.reload()">Retry</button></div>'}
 setTimeout(()=>{if(!window.V)showVErr('Took too long — check your connection')},45000);
+</script>
+<script type="module">
+import {createEngine} from './engine3d.js';
+try{window.ENG3D=createEngine(document.getElementById('eng3d'));document.getElementById('eng3dLoad').remove()}catch(e){document.getElementById('eng3dLoad').textContent='3D engine unavailable on this device'}
 </script>
 <script type="module">
 import {createViewer} from './viewer.js';

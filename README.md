@@ -27,6 +27,7 @@ Live artifact: https://claude.ai/artifact/1wDygTR3GY9bFqhSabUSDU
 | `index.html` | The page (UI, data, interactions) |
 | `viewer.js` | three.js viewer: model setup, materials, opening parts, lights, camera |
 | `x5model.js` | The 3D model as base64-encoded GLB (meshopt-compressed) |
+| `engine3d.js` | Procedural see-through inline-six (B58 proportions) with crank, rods, pistons and firing order 1-5-3-6-2-4 |
 
 ## Run locally
 
