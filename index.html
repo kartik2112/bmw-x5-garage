@@ -463,6 +463,8 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
   <div class="grid g2 mt2">
     <div class="card">
       <div class="row between"><div class="seg" id="segAxle"><button data-a="f" class="on">Front</button><button data-a="r">Rear</button></div><button class="btn sm" onclick="openTire(axle)"><span class="ib" style="margin:0">i</span> Visual guide</button></div>
+      <div id="wheels3d" style="position:relative;height:250px;margin:12px 0 4px;border-radius:16px;overflow:hidden;background:radial-gradient(100% 90% at 50% 35%,#3a2e25 0%,#1a1512 60%,#0d0b0a 100%);cursor:pointer"><div id="w3load" style="position:absolute;inset:0;display:grid;place-items:center;color:#a89d92;font-size:11px;letter-spacing:.14em">LOADING WHEELS…</div>
+        <div style="position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:space-around;pointer-events:none;font-family:var(--mono);font-size:11px"><span id="w3f" style="color:#e3b384">FRONT · 275/40 R21</span><span id="w3r" style="color:#6f665d">REAR · 315/35 R21</span></div></div>
       <div class="decoder" id="decoder"></div>
       <div class="explain" id="decExplain">Tap any segment.</div>
     </div>
@@ -749,7 +751,7 @@ function renderDec(){const t=TIRES[axle];const parts=[[t.w,'w'],['/',''],[t.a,'a
   li:`<b>Load index ${t.li}</b>: each tire can carry up to ${LI[t.li]}.`,sr:'<b>Speed rating Y</b>: up to 186 mph. Some all-season and winter options are V-rated (149 mph). Your car is governed at 130 mph, but some shops will still refuse to fit a lower rating than the original.',
   xl:'<b>XL = Extra Load.</b> A reinforced build that runs at higher inflation pressure. Heavy SUVs like the X5 need it.'};
  $$('#decoder span').forEach(s=>s.onclick=()=>{$$('#decoder span').forEach(x=>x.classList.toggle('on',x===s));$('#decExplain').innerHTML=E[s.dataset.k]})}
-$$('#segAxle button').forEach(b=>b.onclick=()=>{axle=b.dataset.a;$$('#segAxle button').forEach(x=>x.classList.toggle('on',x===b));renderDec();$('#decExplain').textContent='Tap any segment.'});
+$$('#segAxle button').forEach(b=>b.onclick=()=>{axle=b.dataset.a;window.W3D&&W3D.highlight(axle);$('#w3f').style.color=axle==='f'?'#e3b384':'#6f665d';$('#w3r').style.color=axle==='r'?'#e3b384':'#6f665d';$$('#segAxle button').forEach(x=>x.classList.toggle('on',x===b));renderDec();$('#decExplain').textContent='Tap any segment.'});
 (function(){const c=t=>{const sw=t.w*t.a/100,dia=t.d*25.4+2*sw;return{sw,dia,rev:Math.round(1609344/(Math.PI*dia))}};const f=c(TIRES.f),r=c(TIRES.r);
  $('#tireMath').innerHTML=[['Sidewall',f.sw.toFixed(1)+' mm',r.sw.toFixed(1)+' mm'],['Overall diameter',(f.dia/25.4).toFixed(2)+' in',(r.dia/25.4).toFixed(2)+' in'],['Revs per mile',f.rev,r.rev],['Width',(275/25.4).toFixed(1)+' in',(315/25.4).toFixed(1)+' in']].map(x=>`<tr><td class="muted">${x[0]}</td><td class="r">${x[1]}</td><td class="r">${x[2]}</td></tr>`).join('')+`<tr><td colspan="3" class="ok-t" style="font-size:12px">The front and rear diameters differ by only ${Math.abs(f.dia-r.dia).toFixed(1)} mm (${(Math.abs(f.dia-r.dia)/f.dia*100).toFixed(2)}%), which is what xDrive needs.</td></tr>`})();
 function renderTemp(v){$('#tempT').textContent=v+'°F';const el=$('#tempV');
@@ -992,6 +994,7 @@ try{
     b.onclick=()=>{if(k==='engine'){closeExcept(['hood']);setPart('hood',1);setView('engine')}else if(k==='cargo'){closeExcept(['trunk','lgate']);setPart('trunk',1);setTimeout(()=>setPart('lgate',1),450);setView('cargo')}else if(k==='lights'){closeExcept();setL('low');setView('lights')}else if(k==='wheel'){closeExcept();setView('wheel')}else{closeExcept();setView('driver')}setTimeout(()=>openSheet(sheet),700)};
     document.getElementById('hots').appendChild(b);V.addHotspot(b,k)});
   {const hr=new Date().getHours();if(hr>=19||hr<6){setScene('night');setL('low')}else if(hr>=16||hr<8){setScene('dusk')}}
+  try{const wh=document.getElementById('wheels3d');window.W3D=V.makeWheels(wh);document.getElementById('w3load').remove();wh.addEventListener('pickaxle',e=>{const b=document.querySelector(`#segAxle button[data-a="${e.detail}"]`);b&&b.click()})}catch(e){const l=document.getElementById('w3load');if(l)l.textContent='3D wheels unavailable'}
   setTimeout(()=>{const h=document.getElementById('vhint');if(h)h.style.opacity=0},6000);
   const t=(location.hash||'').slice(1);if(t)window.onTab(t);
 }catch(e){showVErr(String(e))}

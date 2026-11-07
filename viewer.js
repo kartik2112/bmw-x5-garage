@@ -149,7 +149,27 @@ export async function createViewer(host, opts={}){
     if(!host.clientWidth)return;controls.update(); renderer.render(scene,camera); if(!window.__f2){window.__f2=1;st('frame1 done')}
     if(!placed)return;const w=host.clientWidth,h=host.clientHeight; const cdir=camera.position.clone().sub(center).normalize();
     hotspots.forEach(hs=>{ndc.copy(hs.w).project(camera);const vis=hs.w.clone().sub(center).normalize().dot(cdir)>-0.15;hs.el.style.transform=`translate(${(ndc.x*.5+.5)*w}px,${(-ndc.y*.5+.5)*h}px)`;hs.el.style.opacity=vis?1:0;hs.el.style.pointerEvents=vis?'auto':'none'})});
-  return {renderer,scene,camera,controls,view,setLights,addHotspot,parts:Object.keys(parts),mats,
+  return {makeWheels(host2){
+    // pick the right-side front and rear wheel assemblies (tire + rim + BMW centre cap)
+    const pick=front=>wheels.map(w=>[w,new THREE.Box3().setFromObject(w)]).filter(([w,b])=>(b.getCenter(new THREE.Vector3()).x>0)===front).sort((a,b)=>b[1].max.z-a[1].max.z)[0][0];
+    const r2=new THREE.WebGLRenderer({antialias:true,alpha:true});r2.setPixelRatio(Math.min(1.75,devicePixelRatio||1));r2.outputColorSpace=THREE.SRGBColorSpace;r2.toneMapping=THREE.ACESFilmicToneMapping;r2.toneMappingExposure=1.0;host2.appendChild(r2.domElement);
+    const sc=new THREE.Scene();sc.environment=envTex;sc.environmentIntensity=1.3;sc.add(new THREE.HemisphereLight(0xfff4ea,0x3a3029,.9));const k1=new THREE.DirectionalLight(0xffffff,2.2);k1.position.set(1.5,2.5,4);sc.add(k1);const k3=new THREE.DirectionalLight(0xffe2c4,1.2);k3.position.set(-3,1,3);sc.add(k3);
+    const cam2=new THREE.PerspectiveCamera(28,1,.05,50);const ctl2=new OrbitControls(cam2,r2.domElement);ctl2.enablePan=false;ctl2.enableDamping=true;ctl2.minDistance=2;ctl2.maxDistance=7;ctl2.target.set(0,0,0);cam2.position.set(0.9,0.45,2.6);
+    const mk=(front,x)=>{const src=pick(front);const g=src.clone(true);g.traverse(o=>{if(o.isMesh){o.material=o.material.clone();o.material.transparent=true}});
+      const b=new THREE.Box3().setFromObject(g);const c=b.getCenter(new THREE.Vector3());const holder=new THREE.Group();g.position.sub(c);const spin=new THREE.Group();spin.add(g);holder.add(spin);holder.position.x=x;sc.add(holder);
+      const glow=new THREE.Mesh(new THREE.RingGeometry(.42,.47,64),new THREE.MeshBasicMaterial({color:0xd0782e,transparent:true,opacity:0,side:THREE.DoubleSide}));glow.rotation.x=-Math.PI/2;glow.position.set(x,-b.getSize(new THREE.Vector3()).y/2-0.02,0);sc.add(glow);
+      return {holder,spin,g,glow,size:b.getSize(new THREE.Vector3())}};
+    const F=mk(true,-0.48),Rr=mk(false,0.48);
+    // rear tire is 315 mm vs 275 mm wide: make the width difference visible if the model's wheels are identical
+    if(Rr.size.z/F.size.z<1.05)Rr.g.scale.z*=315/275;
+    const set=[F,Rr];let sel='f';
+    function highlight(a){sel=a;set.forEach((w,i)=>{const on=(i===0)===(a==='f');w.on=on;w.g.traverse(o=>{if(o.isMesh)o.material.opacity=on?1:.28});w.glow.material.opacity=on?.9:0})}
+    highlight('f');
+    const rc=new THREE.Raycaster(),m2=new THREE.Vector2();r2.domElement.addEventListener('click',e=>{const r=r2.domElement.getBoundingClientRect();m2.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);rc.setFromCamera(m2,cam2);const h=rc.intersectObjects([F.holder,Rr.holder],true)[0];if(h){let p=h.object;while(p&&p!==F.holder&&p!==Rr.holder)p=p.parent;host2.dispatchEvent(new CustomEvent('pickaxle',{detail:p===F.holder?'f':'r'}))}});
+    function rs(){const w=host2.clientWidth,h=host2.clientHeight;if(!w||!h)return;r2.setSize(w,h);cam2.aspect=w/h;cam2.updateProjectionMatrix();const k=Math.max(1,1.3/cam2.aspect);cam2.position.setLength(3.05*k)}
+    new ResizeObserver(rs).observe(host2);rs();let lt=performance.now();
+    r2.setAnimationLoop(t=>{const dt=Math.min(.05,(t-lt)/1000);lt=t;if(!host2.offsetParent)return;set.forEach(w=>{w.spin.rotation.z-=dt*(w.on?0.9:0.25);const target=w.on?0.12:0;w.holder.position.z+=(target-w.holder.position.z)*Math.min(1,dt*5)});ctl2.update();r2.render(sc,cam2)});
+    return {highlight}},renderer,scene,camera,controls,view,setLights,addHotspot,parts:Object.keys(parts),mats,
     toggle(k,v){tgt[k]=v===undefined?(tgt[k]?0:1):(v?1:0);return !!tgt[k]},
     setSpin(v){spin=v},setRpm(r){rpmNow=r},autoRotate(v){controls.autoRotate=v},
     setLeather(hex){car.traverse(o=>{if(o.isMesh&&/LEATHER/i.test(o.material.name||''))o.material.color.set(hex)})},

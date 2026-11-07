@@ -69,7 +69,7 @@ export function createEngine(host,opts={}){
   const order=[1,5,3,6,2,4];const firePh={1:0,5:120,3:240,6:360,2:480,4:600};
   function resize(){const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h);cam.aspect=w/h;cam.updateProjectionMatrix();const k=Math.max(1,1.55/cam.aspect);const d=cam.position.clone().sub(ctl.target).normalize().multiplyScalar(10.6*k);cam.position.copy(ctl.target).add(d);ctl.maxDistance=Math.max(16,11*k+4)}
   new ResizeObserver(resize).observe(host);resize();
-  renderer.setAnimationLoop(now=>{const dt=Math.min(.05,(now-last)/1000);last=now;
+  renderer.setAnimationLoop(now=>{const dt=Math.min(.05,(now-last)/1000);last=now;if(!host.offsetParent)return;
     // slow-motion so the pistons are visible: ~0.6 rev/s at idle, ~3 rev/s near redline
     const revps=rpm>0?0.25+rpm/2600:0;ang=(ang+revps*dt*2*Math.PI)%(4*Math.PI);ctl.autoRotate=true;
     crank.rotation.x=-ang;
