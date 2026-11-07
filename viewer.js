@@ -110,28 +110,6 @@ export async function createViewer(host, opts={}){
     const sx=w/512,sy=h/512;const grd=g.createLinearGradient(0,462*sy,0,508*sy);grd.addColorStop(0,'#c4c6c9');grd.addColorStop(1,'#a9abae');g.fillStyle=grd;g.fillRect(166*sx,460*sy,114*sx,50*sy);
     const t=new THREE.CanvasTexture(cv);t.flipY=o.material.map.flipY;t.colorSpace=o.material.map.colorSpace;t.wrapS=o.material.map.wrapS;t.wrapT=o.material.map.wrapT;t.channel=o.material.map.channel;
     const mats=new Set();car.traverse(x=>{if(x.isMesh&&x.material.name==='INT_A')mats.add(x.material)});mats.forEach(m=>{m.map=t;m.needsUpdate=true});window.__rcTex=o.material.map})}
-  // wheels: replace the model's multi-spoke rims with 21" Y-spoke bi-color rims like the owner's car
-  {const tex=(()=>{let m=null;car.traverse(o=>{if(!m&&o.isMesh&&o.material.name==='INT_A')m=o.material.map});return m})();
-   const face=new THREE.MeshPhysicalMaterial({color:0xe6e8eb,metalness:.85,roughness:.22,clearcoat:.6,envMapIntensity:1.6});
-   const side=new THREE.MeshStandardMaterial({color:0x3a3d42,metalness:.8,roughness:.4});
-   const barrelM=new THREE.MeshStandardMaterial({color:0x2a2c30,metalness:.7,roughness:.5,side:THREE.DoubleSide});
-   const seg=(r0,a0,r1,a1,w0,w1,d)=>{const p0=new THREE.Vector2(Math.cos(a0)*r0,Math.sin(a0)*r0),p1=new THREE.Vector2(Math.cos(a1)*r1,Math.sin(a1)*r1);const dir=p1.clone().sub(p0).normalize();const n=new THREE.Vector2(-dir.y,dir.x);
-     const sh=new THREE.Shape([p0.clone().addScaledVector(n,w0/2),p1.clone().addScaledVector(n,w1/2),p1.clone().addScaledVector(n,-w1/2),p0.clone().addScaledVector(n,-w0/2)]);return new THREE.ExtrudeGeometry(sh,{depth:d,bevelEnabled:true,bevelThickness:.004,bevelSize:.003,bevelSegments:1})};
-   (parts.Wheel||[]).forEach(top=>{let rim=null,tire=null;top.traverse(o=>{if(o.isMesh&&o.material.name==='material')rim=o;if(o.isMesh&&o.material.name==='TIRE')tire=o});if(!rim||!tire)return;
-     const pivot=top.parent;const tb=new THREE.Box3().setFromObject(tire);const sz=tb.getSize(new THREE.Vector3());const c=tb.getCenter(new THREE.Vector3());const sideSign=c.z>0?1:-1;rim.visible=false;
-     const R=0.262,W=sz.z;const g=new THREE.Group();
-     const barrel=new THREE.Mesh(new THREE.CylinderGeometry(R,R,W*0.86,48,1,true),barrelM);barrel.rotation.x=Math.PI/2;g.add(barrel);
-     const lip=new THREE.Mesh(new THREE.TorusGeometry(R,0.011,10,64),face);lip.position.z=sideSign*(W*0.43);g.add(lip);
-     const back=new THREE.Mesh(new THREE.CircleGeometry(R,48),new THREE.MeshStandardMaterial({color:0x151618,metalness:.5,roughness:.6,side:THREE.DoubleSide}));back.position.z=sideSign*(W*0.43-0.13);g.add(back);
-     const spokes=new THREE.Group();const d=0.035;
-     for(let k=0;k<5;k++){const a=k*2*Math.PI/5+Math.PI/2;
-       [seg(0.065,a,0.15,a,0.05,0.038,d),seg(0.145,a,0.258,a-0.2,0.032,0.024,d),seg(0.145,a,0.258,a+0.2,0.032,0.024,d)].forEach(geo=>{spokes.add(new THREE.Mesh(geo,[face,side]))})}
-     const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.08,d+0.01,32),side);hub.rotation.x=Math.PI/2;hub.position.z=d/2;spokes.add(hub);
-     if(tex){const cap=new THREE.CircleGeometry(0.034,40);const uv=cap.attributes.uv,pos=cap.attributes.position;for(let i=0;i<uv.count;i++){const x=pos.getX(i)/0.034,y=pos.getY(i)/0.034;uv.setXY(i,0.158+0.142*x,0.818-0.142*y*(tex.flipY?-1:1))}
-       const cm=new THREE.Mesh(cap,new THREE.MeshStandardMaterial({map:window.__rcTex||tex,metalness:.3,roughness:.35}));cm.position.z=d+0.007;spokes.add(cm)}
-     spokes.scale.z=sideSign;spokes.position.z=sideSign*(W*0.43-0.05);if(sideSign<0)spokes.rotation.y=0;g.add(spokes);
-     g.traverse(m=>{if(m.isMesh){m.castShadow=true}});
-     pivot.add(g);g.position.copy(pivot.worldToLocal(c.clone()))})}
   // remove side 'M' fender badges (car is not an M model)
   car.traverse(o=>{if(o.isMesh&&/BADGES/i.test(o.material.name||'')){let p=o,hit=false;while(p){if(/Fender_F/.test(p.name)){hit=true;break}p=p.parent}if(hit)o.visible=false}});
   // panoramic roof sunshade
