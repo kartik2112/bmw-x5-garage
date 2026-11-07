@@ -484,11 +484,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
     </div>
   </div>
 
-  <div class="card mt">
-    <div class="row between"><h3>Are summer tires OK today?</h3><span class="mono" id="tempT" style="color:var(--gold2)">55°F</span></div>
-    <input type="range" id="temp" min="10" max="95" value="55">
-    <div class="verdict" id="tempV"></div>
-  </div>
+  
 
   <div class="card mt">
     <div class="row between"><h3>Speed-rating ladder</h3><span class="muted" style="font-size:11px">your X5 is limited to 130 mph</span></div>
@@ -496,6 +492,13 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
     <div class="foot">Every option listed below has the correct load index (107 front / 111 rear) and a speed rating well above 100 mph. From your Notion page "BMW X5 Tire Sizes, Ratings & Comparison".</div>
   </div>
 </div>
+<div class="card mt">
+    <div class="row between"><h3>How each tire handles the temperature</h3><span class="mono" id="tempT" style="color:var(--gold2)">55°F</span></div>
+    <input type="range" id="temp" min="10" max="95" value="55">
+    <div class="verdict" id="tempV"></div>
+    <div id="tempTable" class="mt"></div>
+    <div class="foot">Sources: Pirelli (P Zero below 45°F/7°C; Scorpion Winter built for below 7°C), Hankook, Michelin and Tire Rack product pages and spec listings (M+S vs 3PMS ratings). "Light snow" means M+S only, not certified for severe snow.</div>
+  </div>
   <h3 class="mt3">Options for your 275/40R21 + 315/35R21 setup</h3>
   <div class="grid g2 mt" id="tireList" style="grid-template-columns:1fr"></div>
   <details class="sources"><summary>Sources</summary><ul>
@@ -764,7 +767,21 @@ function renderDec(){const t=TIRES[axle];const parts=[[t.w,'w'],['/',''],[t.a,'a
 $$('#segAxle button').forEach(b=>b.onclick=()=>{axle=b.dataset.a;window.W3D&&W3D.highlight(axle);$('#w3f').style.color=axle==='f'?'#e3b384':'#6f665d';$('#w3r').style.color=axle==='r'?'#e3b384':'#6f665d';$$('#segAxle button').forEach(x=>x.classList.toggle('on',x===b));renderDec();$('#decExplain').textContent='Tap any segment.'});
 (function(){const c=t=>{const sw=t.w*t.a/100,dia=t.d*25.4+2*sw;return{sw,dia,rev:Math.round(1609344/(Math.PI*dia))}};const f=c(TIRES.f),r=c(TIRES.r);
  $('#tireMath').innerHTML=[['Sidewall',f.sw.toFixed(1)+' mm',r.sw.toFixed(1)+' mm'],['Overall diameter',(f.dia/25.4).toFixed(2)+' in',(r.dia/25.4).toFixed(2)+' in'],['Revs per mile',f.rev,r.rev],['Width',(275/25.4).toFixed(1)+' in',(315/25.4).toFixed(1)+' in']].map(x=>`<tr><td class="muted">${x[0]}</td><td class="r">${x[1]}</td><td class="r">${x[2]}</td></tr>`).join('')+`<tr><td colspan="3" class="ok-t" style="font-size:12px">The front and rear diameters differ by only ${Math.abs(f.dia-r.dia).toFixed(1)} mm (${(Math.abs(f.dia-r.dia)/f.dia*100).toFixed(2)}%), which is what xDrive needs.</td></tr>`})();
-function renderTemp(v){$('#tempT').textContent=v+'°F';const el=$('#tempV');
+
+const TEMPDATA=[
+ {n:'Pirelli P Zero (current)',k:'summer',r:'Summer · no M+S',note:'Pirelli: grip drops below 45°F (7°C), and its warranty excludes compound cracking from use below 45°F.'},
+ {n:'Pirelli Scorpion Winter RFT',k:'winter',r:'Winter · 3PMS',note:'Designed for cold weather below 7°C (45°F); strong on snow in European tests.'},
+ {n:'20″ winter wheel set',k:'winter',r:'Winter · 3PMS',note:'Same Scorpion Winter compound in 275/45R20.'},
+ {n:'Hankook Dynapro evo AS',k:'as',r:'All-season · M+S, no 3PMS',note:'Cold-weather resins for below 45°F (Hankook); rated for light snow only.'},
+ {n:'Michelin Pilot Sport AS4',k:'as',r:'All-season · M+S, no 3PMS',note:'Compound stays flexible in the cold; Michelin claims 10% better snow traction than its predecessor. Light snow only.'},
+ {n:'Pirelli Scorpion Verde AS',k:'as',r:'All-season · M+S',note:'Tire Rack: light-snow traction. Independent wet-grip results are mixed.'},
+ {n:'Yokohama Geolandar X-CV',k:'as',r:'All-season · M+S',note:'Silica compound stays pliable across temperatures; light snow.'}];
+function tempVerdict(k,v){
+ if(k==='summer')return v>=45?['ok','Good']:v>=32?['bad','Not recommended']:['bad','Unsafe · cracking risk'];
+ if(k==='as')return v>=40?['ok','Good']:v>=20?['ok','OK · light snow']:['warn','Marginal on snow/ice'];
+ return v>=60?['warn','Works · wears fast']:v>=45?['ok','Good']:['ok','Best']}
+function renderTempTable(v){const t=$('#tempTable');if(!t)return;t.innerHTML=TEMPDATA.map(d=>{const [c,l]=tempVerdict(d.k,v);return `<div class="row between" style="padding:9px 0;border-bottom:1px solid var(--line);flex-wrap:nowrap;align-items:flex-start;gap:10px"><div><div style="font-weight:600;font-size:13px">${d.n}</div><div class="muted" style="font-size:11px">${d.r}</div><div class="dim" style="font-size:11px;margin-top:2px">${d.note}</div></div><span class="pill ${c}" style="flex:none">${l}</span></div>`}).join('')}
+function renderTemp(v){renderTempTable(v);$('#tempT').textContent=v+'°F';const el=$('#tempV');
  if(v<45){el.className='verdict bad';el.innerHTML=`<b>Below 45°F (7°C): summer tires stop working well.</b> The tread compound hardens and grip drops on both dry and wet roads. Near freezing the rubber can crack, and on snow or ice these tires are dangerous. That covers most of Tahoe from November to March, so you'll want winter tires or a separate winter set.`}
  else if(v<55){el.className='verdict warn';el.innerHTML=`<b>Borderline.</b> The P Zeros will work, but grip in the wet is falling off. Bay Area winter mornings often sit here.`}
  else{el.className='verdict ok';el.innerHTML=`<b>Summer tires are in their element.</b> They grip and brake best from here up. Normal Bay Area weather for most of the year.`}}
@@ -968,9 +985,9 @@ function setL(m){window._lm=m;window.V&&V.setLights(m);syncLightBtn()}
 function setScene(m){scene3=m;const v=$('#viewer');v.classList.toggle('night',m==='night');v.classList.toggle('dusk',m==='dusk');window.V&&V.setNight(m==='night');const b=document.querySelector('.vb[data-a="scene"]');b.textContent={studio:'Studio',night:'Night',dusk:'Golden hr'}[m]}
 function setPart(k,on){if(!window.V)return;if(k==='doors'){['FL','FR','BL','BR'].forEach(d=>V.toggle(d,on))}else V.toggle(k,on);vState[k]=on?1:0;const b=document.querySelector(`.vb[data-a="${k}"]`);b&&b.classList.toggle('on',!!on)}
 function closeExcept(keep=[]){if(!window.V)return;['hood','trunk','lgate','doors'].forEach(k=>{if(!keep.includes(k))setPart(k,0)});if(!keep.includes('roof')){V.toggle('roof',0);const r=document.querySelector('.vb[data-a="roof"]');if(r){r.classList.remove('on');r.textContent='Sky roof'}}}
-function setView(v){const hs=document.getElementById('hots');if(hs)hs.style.display=v==='driver'?'none':'';window.V&&V.view(v);$$('#vviews button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
+function setView(v,force){if(window._cv==='driver'&&v!=='driver'&&!force&&window._keepDriver)return;window._cv=v;const hs=document.getElementById('hots');if(hs)hs.style.display=v==='driver'?'none':'';window.V&&V.view(v);$$('#vviews button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
 $$('#vviews button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
-$$('.vb').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(!window.V)return;
+$$('.vb').forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(!window.V)return;window._keepDriver=a!=='closeall';setTimeout(()=>window._keepDriver=false,0);
   if(a==='closeall'){closeExcept();setView('front');toast('All closed');return}
   if(a==='roof'){const on=V.toggle('roof');b.classList.toggle('on',on);b.textContent=on?'Sky roof: open':'Sky roof';if(on)setView('top')}
   else if(a==='hood'||a==='trunk'||a==='lgate'||a==='doors'){setPart(a,!vState[a]);if(a==='hood'&&vState.hood)setView('engine');if((a==='trunk'&&vState.trunk)||(a==='lgate'&&vState.lgate))setView('cargo')}

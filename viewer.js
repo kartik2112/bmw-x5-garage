@@ -53,7 +53,7 @@ export async function createViewer(host, opts={}){
   root.rotation.y=yaw; root.updateMatrixWorld(true);
   // materials
   const paint=new THREE.MeshPhysicalMaterial({color:0x010102,metalness:0.0,roughness:0.14,clearcoat:1,clearcoatRoughness:0.03,envMapIntensity:0.3});
-  const cognac=new THREE.Color(opts.leather||0x8a4a22);
+  const cognac=new THREE.Color(opts.leather||0x8c5a3c);
   const mats={};
   car.traverse(o=>{if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;const m=o.material;const nm=(m.name||'');mats[nm]=(mats[nm]||0)+1;
     if(/CARPAINT/i.test(nm)){o.material=paint}
@@ -99,6 +99,10 @@ export async function createViewer(host, opts={}){
   const gc=document.createElement('canvas');gc.width=gc.height=128;const gx=gc.getContext('2d');const gr=gx.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.18,'rgba(230,240,255,.85)');gr.addColorStop(.5,'rgba(190,215,255,.22)');gr.addColorStop(1,'rgba(190,215,255,0)');gx.fillStyle=gr;gx.fillRect(0,0,128,128);
   const gtex=new THREE.CanvasTexture(gc);const glows=[lb.min.z+0.3,lb.max.z-0.3].map(z=>{const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:gtex,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,opacity:0}));sp.position.set(lb.max.x-0.22,lb.getCenter(new THREE.Vector3()).y+0.01,z);sp.scale.setScalar(0.55);scene.add(sp);return sp});
   const beams=[];[-1,1].forEach(sd=>{const sl=new THREE.SpotLight(0xeaf2ff,0,30,0.42,0.5,1.2);const zc=sd>0?lb.max.z-0.25:lb.min.z+0.25;sl.position.set(lb.max.x,lb.getCenter(new THREE.Vector3()).y,zc);sl.target.position.set(lb.max.x+10,-0.5,zc*1.3);scene.add(sl,sl.target);beams.push(sl)});
+  // cognac leather lives in textured interior materials: pull the model's orange-gold towards real Cognac (less saturated, slightly redder)
+  {const done=new Set();car.traverse(o=>{if(!o.isMesh)return;const m=o.material;if(!/^(INT_A|grille|Fabric)$/.test(m.name||'')||done.has(m))return;done.add(m);
+    if(o.getWorldPosition(new THREE.Vector3()).y<0.3&&m.name==='grille')return;
+    m.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n{float l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));vec3 d=mix(vec3(l),diffuseColor.rgb,0.62);diffuseColor.rgb=d*vec3(1.0,0.9,0.86);}')};m.needsUpdate=true})}
   // remove side 'M' fender badges (car is not an M model)
   car.traverse(o=>{if(o.isMesh&&/BADGES/i.test(o.material.name||'')){let p=o,hit=false;while(p){if(/Fender_F/.test(p.name)){hit=true;break}p=p.parent}if(hit)o.visible=false}});
   // panoramic roof sunshade
