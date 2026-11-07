@@ -103,6 +103,8 @@ export async function createViewer(host, opts={}){
   {const done=new Set();car.traverse(o=>{if(!o.isMesh)return;const m=o.material;if(!/^(INT_A|grille|Fabric)$/.test(m.name||'')||done.has(m))return;done.add(m);
     if(o.getWorldPosition(new THREE.Vector3()).y<0.3&&m.name==='grille')return;
     m.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n{float l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));vec3 d=mix(vec3(l),diffuseColor.rgb,0.62);diffuseColor.rgb=d*vec3(1.0,0.9,0.86);}')};m.needsUpdate=true})}
+  // calipers: 2026 X5 xDrive40i standard brakes have dark grey calipers (the model shipped with blue M Sport calipers)
+  (parts.Caliper||[]).forEach(c=>c.traverse(o=>{if(!o.isMesh)return;const col=o.material.color;if(!col)return;const hsl={};col.getHSL(hsl);if(hsl.s>0.25&&hsl.h>0.5&&hsl.h<0.75||o.material.map){o.material=o.material.clone();if(o.material.map&&!(hsl.s>0.25)){o.material.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n{float l=dot(diffuseColor.rgb,vec3(0.299,0.587,0.114));if(diffuseColor.b>diffuseColor.r*1.3)diffuseColor.rgb=vec3(l*0.55);}')}}else{o.material.color=new THREE.Color(0x2b2d31)}}}));
   // remove side 'M' fender badges (car is not an M model)
   car.traverse(o=>{if(o.isMesh&&/BADGES/i.test(o.material.name||'')){let p=o,hit=false;while(p){if(/Fender_F/.test(p.name)){hit=true;break}p=p.parent}if(hit)o.visible=false}});
   // panoramic roof sunshade
