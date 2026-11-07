@@ -260,6 +260,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
     <button class="tab" data-t="engine" data-g="explore">Engine</button>
     <button class="tab" data-t="lights" data-g="explore">Lighting</button>
     <button class="tab" data-t="cargo" data-g="explore">Cargo</button>
+    <button class="tab" data-t="wheels" data-g="explore">Wheels &amp; Tires</button>
     <button class="tab" data-t="specs" data-g="explore">Spec Sheet</button>
     <button class="tab" data-t="tires" data-g="workshop">Tires</button>
     <button class="tab" data-t="chains" data-g="workshop">Snow Chains</button>
@@ -448,6 +449,13 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
   </ul></details>
 </section>
 
+<!-- ============ WHEELS & TIRES (explore) ============ -->
+<section class="view" id="v-wheels">
+  <h2><small>Your wheels &amp; tires</small>21″ staggered · Pirelli P Zero</h2>
+  <p class="lead">Your current setup: 275/40 R21 107Y XL front and 315/35 R21 111Y XL rear, Pirelli P Zero summer run-flats. The rears are 40 mm wider, but front and rear stand almost exactly the same height, which xDrive needs. Tap a wheel or each part of the tire code to see what it means. Replacement options and prices are in the Workshop's Tires tab.</p>
+  <div class="mount2" id="wheelsMount"></div>
+</section>
+
 <!-- ============ SPECS ============ -->
 <section class="view" id="v-specs">
   <h2><small>05 · Spec sheet</small>Every number, with its source</h2>
@@ -460,6 +468,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
 <section class="view" id="v-tires">
   <h2><small>06 · Workshop</small>Tires</h2>
   <p class="lead">Your car has a staggered setup: the rear tires are 40 mm wider than the fronts, but both are almost exactly the same height (overall diameter), which xDrive needs. Tap each part of a tire code to see what it means.</p>
+  <div id="tireExplain">
   <div class="grid g2 mt2">
     <div class="card">
       <div class="row between"><div class="seg" id="segAxle"><button data-a="f" class="on">Front</button><button data-a="r">Rear</button></div><button class="btn sm" onclick="openTire(axle)"><span class="ib" style="margin:0">i</span> Visual guide</button></div>
@@ -486,6 +495,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
     <div id="ladder"></div>
     <div class="foot">Every option listed below has the correct load index (107 front / 111 rear) and a speed rating well above 100 mph. From your Notion page "BMW X5 Tire Sizes, Ratings & Comparison".</div>
   </div>
+</div>
   <h3 class="mt3">Options for your 275/40R21 + 315/35R21 setup</h3>
   <div class="grid g2 mt" id="tireList" style="grid-template-columns:1fr"></div>
   <details class="sources"><summary>Sources</summary><ul>
@@ -611,7 +621,7 @@ let store={};try{store=JSON.parse(localStorage.getItem('x5garage')||'{}')}catch(
 const save=()=>{try{localStorage.setItem('x5garage',JSON.stringify(store))}catch(e){}};
 
 /* ---------- tabs ---------- */
-function go(t){closeSheet();const tb=$(`.tab[data-t="${t}"]`);if(tb&&tb.hidden)showGroup(tb.dataset.g);window.onTab&&window.onTab(t);$$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('section.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+t));
+function go(t){closeSheet();{const te=document.getElementById('tireExplain');const dest=t==='wheels'?document.getElementById('wheelsMount'):t==='tires'?document.getElementById('v-tires'):null;if(te&&dest&&te.parentElement!==dest){if(t==='tires')dest.insertBefore(te,dest.querySelector('h3.mt3'));else dest.appendChild(te)}}const tb=$(`.tab[data-t="${t}"]`);if(tb&&tb.hidden)showGroup(tb.dataset.g);window.onTab&&window.onTab(t);$$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('section.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+t));
   const b=$(`.tab[data-t="${t}"]`);b&&b.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
   if(t==='garage')animStats(); if(t==='build')renderBuild(); window.scrollTo({top:0,behavior:'smooth'});
   try{history.replaceState(null,'','#'+t)}catch(e){}}
@@ -627,7 +637,7 @@ const SHEETS={
  engine:{t:'B58 · 3.0 L inline-six',b:`<div class="grid g3" style="grid-template-columns:repeat(3,1fr);gap:8px"><div><div class="k">Power</div><div class="v" style="font-size:24px">375<small>hp</small></div></div><div><div class="k">Torque</div><div class="v" style="font-size:24px">398<small>lb-ft</small></div></div><div><div class="k">0–60</div><div class="v" style="font-size:24px">5.2<small>s</small></div></div></div><p class="muted mt" style="line-height:1.6">Twin-scroll turbo, direct injection, 48V mild hybrid built into the 8-speed Steptronic gearbox. There's no dipstick; check the oil level in iDrive.</p>`,go:'engine'},
  cargo:{t:'Cargo · 40/20/40',b:`<div class="row" style="gap:28px"><div><div class="k">Seats up</div><div class="v">33.9<small>ft³</small></div></div><div><div class="k">Folded</div><div class="v">72.3<small>ft³</small></div></div></div><p class="muted mt" style="line-height:1.6">Fold just the middle 20% and the boards fit while four people still ride. The 12V battery is under the cargo floor.</p>`,go:'cargo'},
  lights:{t:'Adaptive full LED',b:`<p class="muted" style="line-height:1.6">Standard on the xDrive40i from 2025: they turn with the steering and dip the high beams automatically. Matrix LED with Selective Beam was optional.</p>`,go:'lights'},
- tires:{t:'21″ staggered · P Zero',b:`<div class="kv"><div>Front</div><div>275/40 R21 107Y XL</div><div>Rear</div><div>315/35 R21 111Y XL</div><div>Type</div><div>Summer, run-flat</div></div><p class="muted mt" style="line-height:1.6">No M+S marking, so they don't count as snow tires at a Caltrans R2 checkpoint.</p>`,go:'tires'},
+ tires:{t:'21″ staggered · P Zero',b:`<div class="kv"><div>Front</div><div>275/40 R21 107Y XL</div><div>Rear</div><div>315/35 R21 111Y XL</div><div>Type</div><div>Summer, run-flat</div></div><p class="muted mt" style="line-height:1.6">No M+S marking, so they don't count as snow tires at a Caltrans R2 checkpoint.</p>`,go:'wheels'},
  cabin:{t:'Cabin',b:`<div class="kv"><div>Seats</div><div>5 · 40/20/40 rear</div><div>Front legroom</div><div>39.8 in</div><div>Rear legroom</div><div>37.4 in</div><div>Display</div><div>12.3″ + 14.9″ Curved</div></div>`,go:'cargo'}};
 function openSheet(k){const s=SHEETS[k];if(!s)return;$('#sheetBody').innerHTML=`<div class="eyebrow">Inspect</div><h2 style="margin:6px 0 12px">${s.t}</h2>${s.b}<div class="row mt"><button class="btn on" onclick="closeSheet();go('${s.go}')">Explore →</button></div>`;$('#sheet').classList.add('on')}
 function closeSheet(){$('#sheet').classList.remove('on')}
