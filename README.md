@@ -46,3 +46,7 @@ three.js r170 loads from the jsDelivr CDN.
 3D model: "2024 BMW X5 xDrive40i" by [ddiaz-design](https://sketchfab.com/3d-models/b453ba441ff04f9290955d09c3d46b9f) on Sketchfab, licensed **CC BY-NC-SA 4.0**. It has been compressed and restyled (Jet Black paint, Cognac leather, black steering wheel, M fender badges removed, split tailgate added). Under the license, the model may only be used non-commercially, and any derivative must be shared under the same license.
 
 BMW and X5 are trademarks of BMW AG. This is a personal, unofficial project.
+
+## Downloadable model
+
+`export/bmw-x5-xdrive40i-2026-jet-black-cognac.glb` is the restyled car (Jet Black paint, Cognac leather, dark calipers, no M badges, red tail lenses), exported from the viewer. It is based on ["2024 BMW X5 xDrive40i"](https://sketchfab.com/3d-models/2024-bmw-x5-xdrive40i-b453ba441ff04f9290955d09c3d46b9f) by ddiaz-design and is shared under the same licence, CC BY-NC-SA 4.0.
