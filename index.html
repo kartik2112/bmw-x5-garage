@@ -302,6 +302,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
     <button class="tab" data-t="chains" data-g="workshop">Snow Chains</button>
     <button class="tab" data-t="straps" data-g="workshop">Straps</button>
     <button class="tab" data-t="boards" data-g="workshop">Snowboards</button>
+    <button class="tab" data-t="warehouse" data-g="workshop">Warehouse</button>
     <button class="tab" data-t="build" data-g="workshop">Build Sheet <span class="mono" id="buildCount" style="opacity:.7"></span></button>
   </div>
 </nav>
@@ -638,9 +639,24 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
   <details class="sources"><summary>Sources</summary><ul><li>Your project notes: <i>Carrying skis/snowboards inside the X5</i> (Amazon, Walmart, eBay, Leebmann24 and Facebook Marketplace, checked Nov 5, 2026).</li></ul></details>
 </section>
 
+<!-- ============ WAREHOUSE ============ -->
+<section class="view" id="v-warehouse">
+  <h2><small>10 · Workshop</small>Warehouse</h2>
+  <p class="lead">Miscellaneous gear that doesn't belong to a trip: roadside safety, tire inflation and small cabin upgrades. Prices, star ratings and rating counts were read from Amazon on Nov 9, 2026 (Costco noted where it had a match).</p>
+  <div class="grid g2 mt2">
+    <div class="card"><div class="k ok-t">Jump starter: my pick</div><div class="v" style="font-size:22px;margin-top:4px">HALO Bolt Air if you want one box, NOCO GB40 if you want the proven one</div>
+      <div class="explain mt">The HALO Bolt Air jump-starts, inflates (100 PSI) and charges phones, 4.7 stars from 6.3K ratings. The NOCO GB40 has far more history: 130.5K ratings at 4.6, $99.95, but no pump.</div></div>
+    <div class="card"><div class="k ok-t">Tire inflator: my pick</div><div class="v" style="font-size:22px;margin-top:4px">AstroAI cordless 160 PSI, or Fanttik X9 Pro for less</div>
+      <div class="explain mt">Your 21&Prime; tires hold a lot of air, so a pocket inflator is for top-ups, not a full refill. The AstroAI has 16.9K ratings at 4.6 stars. Check your door-jamb placard for the right PSI.</div></div>
+  </div>
+  <div class="row mt2"><div class="seg" id="whF"><button data-wf="all" class="on">All</button><button data-wf="starter">Jump starters</button><button data-wf="inflator">Inflators</button><button data-wf="misc">Cabin &amp; exterior</button></div></div>
+  <div class="grid mt" id="whList"></div>
+  <details class="sources"><summary>Sources</summary><ul><li>Amazon search results and listings (Chrome, Nov 9, 2026): jump starters, tire inflators, Jaronx console organizer (ASIN B09VPL3NQQ).</li><li>Costco.com online prices, Nov 9, 2026: DeWalt jump starter with compressor $144.99 (47 ratings), UltraPro Elite 1200A with air pump $94.99 (189), Fanttik X11 Pro inflator $39.99 (5). Costco's page text didn't show star averages.</li><li>RigStrips SnoStrip: Skihaus and RigStrips reseller pages ($49.95); RV.com and Active Gear Review.</li></ul></details>
+</section>
+
 <!-- ============ BUILD ============ -->
 <section class="view" id="v-build">
-  <h2><small>10 · Build sheet</small>Your winter build</h2>
+  <h2><small>11 · Build sheet</small>Your winter build</h2>
   <p class="lead">Everything you've added from the workshop tabs. The ring tracks how ready you are for a snow trip.</p>
   <div class="grid g2 mt2">
     <div class="card"><div id="buildList"></div><div class="row between mt2" style="border-top:1px solid var(--line2);padding-top:12px"><span class="k">Estimated total</span><span class="ticker" id="buildTotal">$0</span></div>
@@ -877,6 +893,22 @@ const CAT={
   {id:'s-b',n:'Cam strap 6′ with swivel carabiner',p:33.97,q:'$33.97 · B0DSK8MQ6K',fit:'ok',tag:'Swivel hook',m:'6 ft is enough to wrap around a double board bag.'},
   {id:'s-c',n:'Tusk swivel-hook soft-loop 1.5″ (2-pack)',p:39.99,q:'$39.99 · B0DSCJPTPZ',fit:'ok',tag:'Soft loops',m:'Soft loops won\'t scratch the trim. Wider webbing than you need, but the swivel hooks are good.'},
   {id:'s-bun',n:'Bungee cords',p:null,q:'—',fit:'no',tag:'Avoid',m:'Metal hooks scratch the trim, and the cords stretch in a hard stop.'}],
+ warehouse:[
+  {id:'w-halo',g:'starter',n:'HALO Bolt Air 58830 jump starter + 100 PSI compressor',p:129.99,q:'$129.99 Amazon',fit:'ok',tag:'Combo',m:'4.7 stars · 6.3K ratings. Jump starter, air compressor and 58.8Wh power bank in one unit. Tires get topped up, not filled from flat. Amazon also shows 2 used/new offers from $80.59.'},
+  {id:'w-noco40',g:'starter',n:'NOCO Boost GB40 1000A',p:99.95,q:'$99.95 Amazon',fit:'ok',tag:'Best seller',m:'4.6 stars · 130.5K ratings. Compact lithium jump starter with spark-proof clamp protection. No air pump. The most-reviewed one I found.'},
+  {id:'w-gbx45',g:'starter',n:'NOCO Boost GBX45 1250A',p:124.95,q:'$124.95 Amazon',fit:'ok',tag:'Step up',m:'4.5 stars · 15.7K ratings. Bigger NOCO with more cranking headroom. Two-day delivery (Wed, Nov 11).'},
+  {id:'w-gb50',g:'starter',n:'NOCO Boost GB50 1500A',p:149.95,q:'$149.95 Amazon',fit:'ok',tag:'Big NOCO',m:'4.6 stars · 17K ratings. The overkill option for a 3.0L engine.'},
+  {id:'w-hulk',g:'starter',n:'Hulkman Alpha85 2000A',p:119.99,q:'$119.99 Amazon (list $199.99)',fit:'ok',tag:'Great reviews',m:'4.7 stars · 13.4K ratings. 2000A with a 74Wh power bank and LED display. Price is an Amazon Exclusive Prime price.'},
+  {id:'w-goo',g:'starter',n:'GOOLOO GP4000 4000A',p:79.96,q:'$79.96 Amazon (list $119.99)',fit:'ok',tag:'Budget',m:'4.6 stars · 9K ratings. Best value among the big-number jump starters. \'Peak amps\' on these are marketing numbers, so judge by reviews.'},
+  {id:'w-dew',g:'starter',n:'DEWALT DXAEJ14 1600A + 120 PSI inflator',p:129.0,q:'$129.00 Amazon · $144.99 Costco',fit:'ok',tag:'Combo',m:'4.4 stars · 734 ratings on Amazon (Costco: 47 ratings). Typical price $169. Heavier than lithium packs, with a real compressor.'},
+  {id:'w-ast7',g:'inflator',n:'AstroAI L7 cordless inflator, 150 PSI',p:25.99,q:'$25.99 Amazon',fit:'ok',tag:'Cheapest',m:'4.3 stars · 20.7K ratings. Pocket inflator for top-ups. Slow on 21-inch tires.'},
+  {id:'w-astcl',g:'inflator',n:'AstroAI cordless inflator, 160 PSI (12V DC + battery)',p:54.99,q:'$54.99 Amazon',fit:'ok',tag:'My pick',m:'4.6 stars · 16.9K ratings. Runs on its battery or a 12V socket, so it won\'t strand you with a dead pack.'},
+  {id:'w-x9p',g:'inflator',n:'Fanttik X9 Pro cordless inflator',p:43.99,q:'$43.99 Amazon',fit:'ok',tag:'Value',m:'4.6 stars · 3.2K ratings. Compact. Costco has the Fanttik X11 Pro for $39.99, but only 5 ratings.'},
+  {id:'w-x8',g:'inflator',n:'Fanttik X8 APEX cordless inflator',p:69.99,q:'$69.99 Amazon',fit:'ok',tag:'Fast',m:'4.6 stars · 6.7K ratings. Advertises one-minute inflation. The newer X9 APEX is also $69.99 with 612 ratings.'},
+  {id:'w-vort',g:'inflator',n:'ETENWOLF VORTEX S6 inflator',p:129.99,q:'$129.99 Amazon',fit:'ok',tag:'Premium',m:'4.6 stars · 3.2K ratings. Priciest of the set, so only worth it if you want the fastest unit.'},
+  {id:'w-air',g:'inflator',n:'Airmoto cordless inflator',p:69.99,q:'$69.99 Amazon',fit:'ok',tag:'Popular',m:'4.3 stars · 29.5K ratings. Many ratings but a lower average than the AstroAI or Fanttik.'},
+  {id:'w-sno',g:'misc',n:'RigStrips SnoStrip (magnetic)',p:49.95,q:'$49.95 RigStrips resellers',fit:'warn',tag:'Test magnet',m:'16 in × 1.5 in. Holds skis or up to 2 snowboards upright against the car. Soft base protects paint. Will come off in a car wash. Check a magnet sticks to the panel you pick (the maker\'s advice). I found no star rating.'},
+  {id:'w-jar',g:'misc',n:'Jaronx center console organizer (X5 G05, 2019–2026)',p:15.42,q:'$15.42 Amazon',fit:'ok',tag:'Cabin',m:'4.6 stars · 720 ratings. Two-level tray with a USB cutout, and buyers confirm it fits a 2026 X5. Cheaper alternative: B0DCV7C839 at $13.59, 4.6 stars · 307 ratings, listed for 2019–2026.'}],
  boards:[
   {id:'b-bmw',g:'bag',n:'BMW Ski and Snowboard Bag 51472209121',p:185,q:'$146 + $39 ship eBay',fit:'ok',tag:'Made for the pass-through',m:'Designed for the 20% pass-through and crash-tested. Its straps hook into the lashing eyes. Owners say it holds 4 pairs of skis; an older BMW manual says up to 2 snowboards. Confirm 2026 fit with the dealer.'},
   {id:'b-kf',g:'bag',n:'KFFKFF double board bag',p:77.99,q:'$77.99 Walmart',fit:'ok',tag:'Holds 2',m:'Padded double bag. For 4 boards, use two.'},
@@ -890,7 +922,7 @@ const CAT={
   {id:'b-fm1',g:'used',n:'Burton padded board bag (Campbell)',p:60,q:'$60 FB Marketplace',fit:'ok',tag:'Local pickup',m:'Local pickup in Campbell.'},
   {id:'b-fm2',g:'used',n:'Dakine Tour 165 cm (San Jose)',p:75,q:'$75 FB Marketplace',fit:'ok',tag:'Local pickup',m:'Local pickup in San Jose.'},
   {id:'b-fm3',g:'used',n:'Athalon Double Ski & Snowboard Bag',p:76,q:'$76 shipped',fit:'ok',tag:'Holds 2',m:'Shipped.'}]};
-const LINKS={"c-ks": [["etrailer", "https://www.etrailer.com/search.aspx?search=Konig+K-Summit+XXL+K67"]], "c-z6": [["Amazon", "https://www.amazon.com/s?k=SCC+Peerless+Super+Z6+SZ451"], ["Walmart", "https://www.walmart.com/search?q=Super+Z6+SZ451"]], "c-xg": [["K\u00f6nig", "https://www.konigchain.com/"], ["Amazon", "https://www.amazon.com/s?k=Konig+XG-12+Pro+266"]], "c-as": [["Amazon", "https://www.amazon.com/s?k=AutoSock+HP860"]], "c-is": [["O'Reilly", "https://www.oreillyauto.com/search?q=isse+snow+socks"]], "c-sp": [["Amazon", "https://www.amazon.com/s?k=Spikes-Spider+Sport+snow+chain"]], "s-a": [["Amazon", "https://www.amazon.com/dp/B0C52PFPL9"]], "s-b": [["Amazon", "https://www.amazon.com/dp/B0DSK8MQ6K"]], "s-c": [["Amazon", "https://www.amazon.com/dp/B0DSCJPTPZ"]], "b-bmw": [["eBay", "https://www.ebay.com/sch/i.html?_nkw=BMW+51472209121"]], "b-kf": [["Walmart", "https://www.walmart.com/search?q=KFFKFF+double+snowboard+bag"]], "b-om": [["Amazon", "https://www.amazon.com/dp/B0FJ8GFC9W"]], "b-at": [["Amazon", "https://www.amazon.com/dp/B07X3MMRLX"]], "b-wo": [["Amazon", "https://www.amazon.com/dp/B0BKQ6CX6T"]], "b-dk": [["Amazon", "https://www.amazon.com/s?k=Dakine+Low+Roller+snowboard+bag"]], "b-sl": [["Amazon", "https://www.amazon.com/s?k=snowboard+sleeve+cover"]], "b-li": [["Amazon", "https://www.amazon.com/s?k=BMW+X5+2019-2026+cargo+liner+backrest+mat"]], "b-wt": [["WeatherTech", "https://www.weathertech.com/search/?q=SPB202"]]};
+const LINKS={"c-ks": [["etrailer", "https://www.etrailer.com/search.aspx?search=Konig+K-Summit+XXL+K67"]], "c-z6": [["Amazon", "https://www.amazon.com/s?k=SCC+Peerless+Super+Z6+SZ451"], ["Walmart", "https://www.walmart.com/search?q=Super+Z6+SZ451"]], "c-xg": [["K\u00f6nig", "https://www.konigchain.com/"], ["Amazon", "https://www.amazon.com/s?k=Konig+XG-12+Pro+266"]], "c-as": [["Amazon", "https://www.amazon.com/s?k=AutoSock+HP860"]], "c-is": [["O'Reilly", "https://www.oreillyauto.com/search?q=isse+snow+socks"]], "c-sp": [["Amazon", "https://www.amazon.com/s?k=Spikes-Spider+Sport+snow+chain"]], "s-a": [["Amazon", "https://www.amazon.com/dp/B0C52PFPL9"]], "s-b": [["Amazon", "https://www.amazon.com/dp/B0DSK8MQ6K"]], "s-c": [["Amazon", "https://www.amazon.com/dp/B0DSCJPTPZ"]], "b-bmw": [["eBay", "https://www.ebay.com/sch/i.html?_nkw=BMW+51472209121"]], "b-kf": [["Walmart", "https://www.walmart.com/search?q=KFFKFF+double+snowboard+bag"]], "b-om": [["Amazon", "https://www.amazon.com/dp/B0FJ8GFC9W"]], "b-at": [["Amazon", "https://www.amazon.com/dp/B07X3MMRLX"]], "b-wo": [["Amazon", "https://www.amazon.com/dp/B0BKQ6CX6T"]], "b-dk": [["Amazon", "https://www.amazon.com/s?k=Dakine+Low+Roller+snowboard+bag"]], "b-sl": [["Amazon", "https://www.amazon.com/s?k=snowboard+sleeve+cover"]], "b-li": [["Amazon", "https://www.amazon.com/s?k=BMW+X5+2019-2026+cargo+liner+backrest+mat"]], "b-wt": [["WeatherTech", "https://www.weathertech.com/search/?q=SPB202"]], "w-halo": [["Amazon", "https://www.amazon.com/s?k=HALO+Bolt+Air+58830"]], "w-noco40": [["Amazon", "https://www.amazon.com/s?k=NOCO+Boost+GB40"]], "w-gbx45": [["Amazon", "https://www.amazon.com/s?k=NOCO+Boost+GBX45"]], "w-gb50": [["Amazon", "https://www.amazon.com/s?k=NOCO+Boost+GB50"]], "w-hulk": [["Amazon", "https://www.amazon.com/s?k=Hulkman+Alpha85"]], "w-goo": [["Amazon", "https://www.amazon.com/s?k=GOOLOO+GP4000"]], "w-dew": [["Amazon", "https://www.amazon.com/s?k=DEWALT+DXAEJ14"], ["Costco", "https://www.costco.com/s?keyword=jump+starter"]], "w-ast7": [["Amazon", "https://www.amazon.com/s?k=AstroAI+L7+tire+inflator"]], "w-astcl": [["Amazon", "https://www.amazon.com/s?k=AstroAI+cordless+tire+inflator+160PSI"]], "w-x9p": [["Amazon", "https://www.amazon.com/s?k=Fanttik+X9+Pro+tire+inflator"], ["Costco", "https://www.costco.com/s?keyword=tire+inflator"]], "w-x8": [["Amazon", "https://www.amazon.com/s?k=Fanttik+X8+APEX"]], "w-vort": [["Amazon", "https://www.amazon.com/s?k=ETENWOLF+VORTEX+S6"]], "w-air": [["Amazon", "https://www.amazon.com/s?k=Airmoto+tire+inflator"]], "w-sno": [["Skihaus", "https://skihaus.com/snostrip"]], "w-jar": [["Amazon", "https://www.amazon.com/dp/B09VPL3NQQ"], ["Alt.", "https://www.amazon.com/dp/B0DCV7C839"]]};
 const ALL={};Object.entries(CAT).forEach(([k,a])=>a.forEach(i=>{i.cat=k;ALL[i.id]=i}));
 store.build=store.build||[];
 function itemHTML(i){const sel=store.build.includes(i.id);const fitP={ok:'<span class="pill ok">fits</span>',warn:'<span class="pill warn">check</span>',no:'<span class="pill bad">no</span>'}[i.fit];
@@ -898,14 +930,16 @@ function itemHTML(i){const sel=store.build.includes(i.id);const fitP={ok:'<span 
 function bindItems(root){root.querySelectorAll('.item').forEach(el=>{const a=el.querySelector('.add');if(a)a.onclick=e=>{e.stopPropagation();toggleBuild(el.dataset.id)};const m=el.querySelector('.more');if(m)m.onclick=e=>{e.preventDefault();el.classList.toggle('open')}})}
 function toggleBuild(id){const b=store.build;const i=b.indexOf(id);if(i>=0)b.splice(i,1);else{b.push(id);toast('Added to build · '+ALL[id].n)}save();refreshLists();updCount()}
 function updCount(){$('#buildCount').textContent=store.build.length?'· '+store.build.length:''}
-let chainFilter='ok',gearFilter='all';
+let chainFilter='ok',gearFilter='all',whFilter='all';
 function refreshLists(){
  if($('#tireList')){$('#tireList').innerHTML=CAT.tires.map(itemHTML).join('');bindItems($('#tireList'))}
  $('#chainList').innerHTML=CAT.chains.filter(i=>chainFilter==='all'||(chainFilter==='ok'?i.fit==='ok':i.fit==='no')).map(itemHTML).join('');bindItems($('#chainList'));
  $('#strapList').innerHTML=CAT.straps.map(itemHTML).join('');bindItems($('#strapList'));
+ if($('#whList')){$('#whList').innerHTML=CAT.warehouse.filter(i=>whFilter==='all'||i.g===whFilter).map(itemHTML).join('');bindItems($('#whList'))}
  $('#gearList').innerHTML=CAT.boards.filter(i=>gearFilter==='all'||i.g===gearFilter).map(itemHTML).join('');bindItems($('#gearList'));
  if($('#v-build').classList.contains('on'))renderBuild()}
 $$('#chainF button').forEach(b=>b.onclick=()=>{chainFilter=b.dataset.cf;$$('#chainF button').forEach(x=>x.classList.toggle('on',x===b));refreshLists()});
+$$('#whF button').forEach(b=>b.onclick=()=>{whFilter=b.dataset.wf;$$('#whF button').forEach(x=>x.classList.toggle('on',x===b));refreshLists()});
 $$('#gearF button').forEach(b=>b.onclick=()=>{gearFilter=b.dataset.g;$$('#gearF button').forEach(x=>x.classList.toggle('on',x===b));refreshLists()});
 
 /* chain law */
@@ -969,7 +1003,7 @@ $$('#segBoards button').forEach(b=>b.onclick=()=>{nb=+b.dataset.b;$$('#segBoards
 
 /* build sheet */
 function renderBuild(){const items=store.build.map(id=>ALL[id]).filter(Boolean);let tot=0;
- $('#buildList').innerHTML=items.length?items.map(i=>{if(i.p)tot+=i.p;return `<div class="row between" style="padding:10px 0;border-bottom:1px solid var(--line)"><div><div class="k" style="color:var(--gold)">${i.cat}</div><div style="font-family:var(--serif);font-size:17px">${i.n}</div></div><div class="row"><span class="mono" style="font-size:12px">${i.p?'$'+i.p.toFixed(2):'quote'}</span><button class="x" style="position:static;width:26px;height:26px" data-rm="${i.id}">✕</button></div></div>`}).join(''):`<p class="muted">Nothing here yet. Add items from Tires, Snow Chains, Straps or Snowboards.</p><div class="row mt"><button class="btn sm" onclick="go('chains')">Browse chains →</button></div>`;
+ $('#buildList').innerHTML=items.length?items.map(i=>{if(i.p)tot+=i.p;return `<div class="row between" style="padding:10px 0;border-bottom:1px solid var(--line)"><div><div class="k" style="color:var(--gold)">${i.cat}</div><div style="font-family:var(--serif);font-size:17px">${i.n}</div></div><div class="row"><span class="mono" style="font-size:12px">${i.p?'$'+i.p.toFixed(2):'quote'}</span><button class="x" style="position:static;width:26px;height:26px" data-rm="${i.id}">✕</button></div></div>`}).join(''):`<p class="muted">Nothing here yet. Add items from Tires, Snow Chains, Straps, Snowboards or Warehouse.</p><div class="row mt"><button class="btn sm" onclick="go('chains')">Browse chains →</button></div>`;
  $$('[data-rm]').forEach(b=>b.onclick=()=>toggleBuild(b.dataset.rm));
  let n=0;const el=$('#buildTotal');const step=()=>{n+=Math.max(1,(tot-n)/6);if(n>=tot)n=tot;el.textContent='$'+n.toFixed(0);if(n<tot)requestAnimationFrame(step)};step();
  const has=c=>items.some(i=>i.cat===c);const hasWinter=items.some(i=>i.cat==='tires'&&i.cold);
