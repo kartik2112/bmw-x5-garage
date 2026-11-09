@@ -241,6 +241,34 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
 .tnav{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
 @keyframes slideIn{from{transform:translateY(120px);opacity:0}to{transform:none;opacity:1}}
 .buy{display:inline-block;margin:6px 0 0 6px;font-size:11px;padding:4px 9px;border-radius:999px;border:1px solid #b8733f88;color:#e3b384;text-decoration:none}.buy:hover{background:#b8733f33}
+
+/* price comparison */
+.ptable{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.ptable th{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);font-weight:500;text-align:left;padding:10px 10px;border-bottom:1px solid var(--line2);white-space:nowrap}
+.ptable th .sub{display:block;letter-spacing:.04em;text-transform:none;font-size:10.5px;color:var(--dim);margin-top:3px}
+.ptable td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.ptable td.t{min-width:150px}
+.ptable td.t b{display:block;font-weight:600;font-size:13px}
+.ptable td.t span{font-size:11px;color:var(--mute)}
+.pcell{display:block;width:100%;text-align:left;border:1px solid transparent;border-radius:12px;padding:8px 10px;transition:.2s;min-width:118px}
+.pcell:hover{border-color:var(--line2);background:#ffffff08}
+.pcell.on{border-color:var(--gold);background:linear-gradient(135deg,#b8733f22,transparent)}
+.pcell .tot{font-family:var(--mono);font-size:15px;color:var(--ink)}
+.pcell .fr{display:block;font-family:var(--mono);font-size:10.5px;color:var(--mute);margin-top:3px}
+.pcell.best .tot{color:var(--ok)}
+.pcell .tag{display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ok);margin-left:6px}
+.pcell .est{color:var(--warn)}
+.pnone{color:var(--dim);font-size:12px;padding:8px 10px;display:block}
+.pscroll{overflow-x:auto;margin:0 -6px;padding:0 6px}
+.pdetail{display:grid;grid-template-columns:1fr auto;gap:0 14px;font-size:12.5px;margin-top:8px}
+.pdetail div{padding:6px 0;border-bottom:1px dashed var(--line)}
+.pdetail div:nth-child(even){font-family:var(--mono);text-align:right}
+.pdetail .sum{font-weight:600;color:var(--gold2);border-bottom:0}
+.shopcards{display:grid;gap:10px;grid-template-columns:1fr}
+@media(min-width:820px){.shopcards{grid-template-columns:repeat(3,1fr)}}
+.shopcards .card{padding:14px}
+.shopcards ul{list-style:none;margin-top:6px;font-size:12.5px;line-height:1.7;color:var(--mute)}
+.shopcards ul b{color:var(--ink);font-weight:500}
 </style>
 </head>
 <body>
@@ -502,6 +530,17 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
   </div>
   <h3 class="mt3">Options for your 275/40R21 + 315/35R21 setup</h3>
   <div class="grid g2 mt" id="tireList" style="grid-template-columns:1fr"></div>
+  <div class="card mt2" id="priceCard">
+    <div class="row between" style="flex-wrap:wrap;gap:10px"><h3 style="margin:0">What a set of 4 costs, installed</h3>
+      <div class="seg" id="pMode"><button data-m="otd" class="on">Out the door</button><button data-m="tires">Tires only</button></div></div>
+    <p class="muted" style="font-size:12.5px;line-height:1.55;margin-top:6px">2 front 275/40R21 + 2 rear 315/35R21, all-season. Tap a price for the line items. Green is the cheapest shop for that tire. Prices checked Nov 9, 2026.</p>
+    <div class="pscroll mt"><table class="ptable" id="priceTable"></table></div>
+    <div class="card flat mt" id="priceDetailCard"><div class="k" id="pdTitle">Breakdown</div><div class="pdetail" id="priceDetail"></div><div class="foot" id="pdNote" style="margin-top:8px"></div></div>
+    <h3 class="mt2" style="font-size:16px">How each shop charges</h3>
+    <div class="shopcards mt" id="shopCards"></div>
+    <div class="foot">Tax is charged on the tire price only. California doesn't tax separately stated mounting labor (CDTFA annotation 315.0610), and the $1.75 California Tire Fee is a state fee, not a taxable sale. Your final receipt may differ by a few dollars.</div>
+  </div>
+
   <details class="sources"><summary>Sources</summary><ul>
     <li>Your Notion page: <a href="https://www.notion.so/BMW-X5-Tire-Sizes-Ratings-Comparison-3f842a103f4c812d88ede7fe5e333a4c">BMW X5 Tire Sizes, Ratings & Comparison</a></li>
     <li><a href="https://www.bigotires.com/tires/by-vehicle/2025/bmw/x5/xdrive40i/2754021/3153521">Big O — X5 xDrive40i 275/40R21 + 315/35R21 fitments, speed-rating flag</a></li>
@@ -512,6 +551,11 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
     <li><a href="https://tires.costco.com/Product?ItemNo=1635825&tirename=michelin-pilot-sport-all-season-4&partno=71327">Costco — Pilot Sport All Season 4 275/40ZR21 107Y (front, #1635825)</a></li>
     <li><a href="https://tires.costco.com/Product?ItemNo=1997469&tirename=michelin-pilot-sport-all-season-4">Costco — Pilot Sport All Season 4 315/35ZR21 111Y (rear, #1997469)</a></li>
     <li><a href="https://www.cars.com/research/bmw-x5-2026/specs/">Cars.com — base 20″ 275/45R20 fitment</a></li>
+    <li><a href="https://www.walmart.com/browse/auto-tires/tires-accessories/91083_1077064">Walmart — tires filtered for 2026 BMW X5 xDrive40i (front) and 315/35R21 (rear), Nov 9, 2026</a></li>
+    <li><a href="https://www.walmart.com/c/kp/flat-tire">Walmart — tire installation package $18/tire</a></li>
+    <li><a href="https://www.tirerack.com/installers/ca/oakland/94623">Tire Rack installer listing — Bay Area BMW/MINI dealer mount & balance $55 (40-series) / $60 (35-series), disposal $5</a></li>
+    <li><a href="https://cdtfa.ca.gov/lawguides/vol2/suta/315-0610.html">CDTFA 315.0610 — separately stated tire mounting is not taxable</a></li>
+    <li><a href="https://www.avalara.com/us/en/taxrates/state-rates/california/cities/santa-clara.html">Avalara — Santa Clara 9.75%</a> · <a href="https://www.avalara.com/taxrates/en/state-rates/california/cities/san-jose.html">San Jose 10%</a></li>
   </ul></details>
 </section>
 
@@ -800,7 +844,13 @@ const CAT={
   {id:'t-sw',n:'Pirelli Scorpion Winter Run Flat',p:null,q:'≈ $777/rear tire (CAD retailer) · front ≈ €594',fit:'ok',tag:'Winter · 3PMS · V',m:'BMW-approved winter run-flat in both of your sizes: 275/40R21 107V and 315/35R21 111V. With these on, R2 no longer requires chains (AWD + snow tires).',x:'Rear 315/35R21 111V XL RF: TireMart and QuattroTires ($776.98 each, Canadian retailer). Front 275/40R21 107V: Leebmann24 lists the BMW-marked tire at €594. A US quote from Tire Rack or Discount Tire will be more useful. Speed rating V = 149 mph, above the X5\'s 130 mph limit. Links from your Notion page: <a href="https://www.prioritytire.com/set-of-4-pirelli-scorpion-winter-run-flat-275-40r21-107v-xl">front (Priority Tire)</a> · <a href="https://www.bbwheelsonline.com/pirelli-scorpion-winter-tires-315-35r21-111v-bw-3278700/">rear (B&B Wheels)</a> · <a href="https://tyrereviews.com/Tyre/Pirelli/scorpion-winter">reviews</a>.'},
   {id:'t-20',n:'Dedicated 20″ winter wheel + tire set',p:null,q:'Quote',fit:'warn',tag:'Winter · smaller wheel',m:'The usual approach: 20″ is the X5 40i\'s standard size (275/45R20), so the tires cost less, the taller sidewall protects the rims, and BMW\'s own Comfort chains come in 19″/20″ sizes.',x:'Leebmann24 lists the BMW-marked Pirelli Scorpion Winter RF in 275/45R20 110V at about €484. If your car has upgraded M Sport brakes, confirm caliper clearance before ordering 20″ wheels.'},
   {id:'t-vas',n:'Pirelli Scorpion Verde All Season',p:null,q:'Rear $606.05/tire (SimpleTire)',fit:'warn',tag:'All-season · M+S · V',m:'Available in both of your sizes (V-rated). The M+S marking counts as a snow tire for Caltrans R2 on an AWD car. Better than summer tires below 45°F, but much weaker than true winter tires on ice.',x:'Big O flags it "does not meet speed rating" because it\'s V-rated and your originals are Y-rated. Check that your shop will fit it. Links from your Notion page: <a href="https://www.walmart.com/ip/Pirelli-Scorpion-Verde-All-Season-All-Season-315-35R21-111V-XL-SUV-Crossover-Tire/741555457">rear (Walmart)</a> · <a href="https://www.tyrereviews.com/Tyre/Pirelli/scorpion-verde-all-season">reviews</a>.'},
-  {id:'t-ps4',n:'Michelin Pilot Sport All Season 4',p:null,q:'Costco: rear $639.99/tire · front out of stock (Nov 9)',fit:'ok',tag:'All-season · M+S · Y',m:'Costco lists both of your sizes for the 2026 X5 xDrive40i: 275/40ZR21 XL 107Y front and 315/35ZR21 XL 111Y rear. Same load and speed ratings as your P Zeros, marked M+S, 45k-mile warranty. Not run-flat, so carry a tire repair kit. Light snow only (no 3PMS).',x:'Costco (checked Nov 9, 2026): <a href="https://tires.costco.com/Product?ItemNo=1997469&tirename=michelin-pilot-sport-all-season-4">rear #1997469</a> $639.99 each, installation $0, plus $2.25 disposal, $1.75 CA fee and up to $2.99 TPMS fee per tire. <a href="https://tires.costco.com/Product?ItemNo=1635825&tirename=michelin-pilot-sport-all-season-4&partno=71327">Front #1635825</a> shows Temporarily Out of Stock with no price at the Santa Clara, Sunnyvale and Sacramento tire centers; stock comes from the manufacturer, so it is the same at every warehouse. Ask your tire center or check back. Elsewhere the front is about $375–$393 (Discounted Wheel Warehouse, Sam\'s Club).'}],
+  {id:'t-ps4',n:'Michelin Pilot Sport All Season 4',p:null,q:'Walmart $348.07 F / $639.99 R · Costco rear $639.99 (front out of stock) · BMW $346.99 / $689.99',fit:'ok',tag:'All-season · M+S · Y',m:'Costco lists both of your sizes for the 2026 X5 xDrive40i: 275/40ZR21 XL 107Y front and 315/35ZR21 XL 111Y rear. Same load and speed ratings as your P Zeros, marked M+S, 45k-mile warranty. Not run-flat, so carry a tire repair kit. Light snow only (no 3PMS).',x:'Costco (checked Nov 9, 2026): <a href="https://tires.costco.com/Product?ItemNo=1997469&tirename=michelin-pilot-sport-all-season-4">rear #1997469</a> $639.99 each, installation $0, plus $2.25 disposal, $1.75 CA fee and up to $2.99 TPMS fee per tire. <a href="https://tires.costco.com/Product?ItemNo=1635825&tirename=michelin-pilot-sport-all-season-4&partno=71327">Front #1635825</a> shows Temporarily Out of Stock with no price at the Santa Clara, Sunnyvale and Sacramento tire centers; stock comes from the manufacturer, so it is the same at every warehouse. Ask your tire center or check back. Elsewhere the front is about $375–$393 (Discounted Wheel Warehouse, Sam\'s Club).'},
+  {id:'t-gy',n:'Goodyear Eagle F1 All Season',p:null,q:'Walmart $298.11 F / $498.99 R · BMW $329.41 / $488.24',fit:'ok',tag:'All-season · Y',m:'Ultra-high-performance all-season in both of your sizes with your 107Y / 111Y ratings. About $380 less per set than the Michelin at Walmart. Confirm the M+S marking on the sidewall.',x:'Walmart lists 275/40ZR21 107Y XL and 315/35ZR21 111Y XL (checked Nov 9, 2026). Your BMW dealer quoted $329.41 front and $488.24 rear before tax and installation.'},
+  {id:'t-fk',n:'Falken Azenis FK460 A/S',p:null,q:'Walmart $290.00 F / $321.00 R',fit:'ok',tag:'All-season · Y',m:'UHP all-season, Y-rated in both sizes. The cheapest of the well-known brands on Walmart for your setup. Confirm the M+S marking.',x:'Walmart: 275/40ZR21 107Y XL and 315/35ZR21 111Y XL (checked Nov 9, 2026).'},
+  {id:'t-ac',n:'Accelera Iota ST68',p:null,q:'Walmart $189.08 F / $183.94 R',fit:'warn',tag:'All-season · Y/W · budget',m:'Budget SUV all-season. Front is 107Y, rear is 111W (W = 168 mph, above the X5\'s 130 mph limit). 35k-mile warranty.',x:'Walmart (checked Nov 9, 2026). Lesser-known brand; few independent tests.'},
+  {id:'t-ar',n:'American Roadstar Sport AS',p:null,q:'Walmart $160.08 F / $176.06 R',fit:'warn',tag:'All-season · Y · budget',m:'Budget all-season. Front is 109Y (higher load than your 107), rear 111Y.',x:'Walmart (checked Nov 9, 2026). Lesser-known brand; few independent tests.'},
+  {id:'t-ag',n:'Arroyo Grand Sport A/S',p:null,q:'Walmart $135.26 F / $192.93 R',fit:'warn',tag:'All-season · Y · budget',m:'Budget UHP all-season. Front is 109Y, rear 111Y.',x:'Walmart (checked Nov 9, 2026). Lesser-known brand; few independent tests.'},
+  {id:'t-cw',n:'Crosswind Ultra Sport Plus',p:null,q:'Walmart $144.06 F / $156.07 R',fit:'warn',tag:'All-season · Y/W · budget',m:'Cheapest pair. Front 107Y, rear 111W.',x:'Walmart (checked Nov 9, 2026). Lesser-known brand; few independent tests.'}],
  chains:[
   {id:'c-ks',n:'König K-Summit XXL K67',p:680,q:'≈ $680 (unconfirmed)',fit:'ok',tag:'Mounts from outside',m:'Best for 21″ wheels: it mounts from the outside and nothing touches the inner face of the wheel. etrailer confirms the fit. Not sold on Amazon US.'},
   {id:'c-pw',n:'Pewag Servostar SUV RSC 920 V',p:455,q:'≈ €420+ (EU)',fit:'ok',tag:'Mounts from outside',m:'Also mounts from the outside, and an EU retailer confirms the fit. Hard to buy in the US.'},
@@ -1028,6 +1078,52 @@ try{
   setTimeout(()=>{const h=document.getElementById('vhint');if(h)h.style.opacity=0},6000);
   const t=(location.hash||'').slice(1);if(t)window.onTab(t);
 }catch(e){showVErr(String(e))}
+</script>
+
+<script>
+(function(){
+const SHOPS={
+ walmart:{n:'Walmart',where:'Story Rd, San Jose',tax:.10,inst:[18,18],disp:0,fee:1.75,tpms:0,
+  rows:['<b>Install $18/tire</b>: mount, lifetime balance & rotation, valve stem/service pack','<b>Tax 10%</b> (San Jose)','<b>CA Tire Fee $1.75/tire</b>','Disposal: not listed online; ask the store','Call first: some stores lack the machine for low-profile 21″ tires (408-885-1142)']},
+ costco:{n:'Costco',where:'Santa Clara warehouse',tax:.0975,inst:[0,0],disp:2.25,fee:1.75,tpms:2.99,
+  rows:['<b>Install $0</b>: mounting, balancing, rotation and flat repair included','<b>Tax 9.75%</b> (Santa Clara)','<b>Disposal $2.25 + CA Tire Fee $1.75</b> per tire','<b>TPMS fee up to $2.99/tire</b>, paid at install','Only free installation of the three shops']},
+ bmw:{n:'BMW dealer',where:'Your quote',tax:.10,inst:[55,60],disp:5,fee:1.75,tpms:0,est:true,
+  rows:['<b>Tire prices are your BMW quote</b>','<b>Install ≈ $55 front / $60 rear</b> (typical: a Bay Area BMW dealer lists $55 for 40-series, $60 for 35-series)','<b>Disposal ≈ $5 + CA Tire Fee $1.75</b> per tire','<b>Tax 10%</b> (9.75% if the dealer is in Santa Clara)','Ask your service advisor for the exact mount & balance price']}
+};
+const TIRES=[
+ {n:'Michelin Pilot Sport All Season 4',r:'107Y / 111Y · M+S · 45k mi',p:{walmart:[348.07,639.99],costco:[348.07,639.99,'front est.'],bmw:[346.99,689.99]}},
+ {n:'Goodyear Eagle F1 All Season',r:'107Y / 111Y · UHP all-season',p:{walmart:[298.11,498.99],bmw:[329.41,488.24]}},
+ {n:'Falken Azenis FK460 A/S',r:'107Y / 111Y · UHP all-season',p:{walmart:[290.00,321.00]}},
+ {n:'Accelera Iota ST68',r:'107Y / 111W · 35k mi',p:{walmart:[189.08,183.94]}},
+ {n:'American Roadstar Sport AS',r:'109Y / 111Y · budget',p:{walmart:[160.08,176.06]}},
+ {n:'Arroyo Grand Sport A/S',r:'109Y / 111Y · budget',p:{walmart:[135.26,192.93]}},
+ {n:'Crosswind Ultra Sport Plus',r:'107Y / 111W · budget',p:{walmart:[144.06,156.07]}}
+];
+const r2=x=>Math.round(x*100)/100, $m=x=>'$'+x.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+function calc(sk,pr){const c=SHOPS[sk],f=pr[0],r=pr[1],tires=2*f+2*r,tax=r2(tires*c.tax),inst=2*c.inst[0]+2*c.inst[1],fees=4*(c.disp+c.fee+c.tpms);return{f,r,tires,tax,inst,fees,c,total:r2(tires+tax+inst+fees)}}
+let mode='otd',sel=[0,'costco'];
+function render(){
+ const keys=Object.keys(SHOPS);
+ let h='<thead><tr><th>Tire</th>'+keys.map(k=>`<th>${SHOPS[k].n}<span class="sub">${SHOPS[k].where}</span></th>`).join('')+'</tr></thead><tbody>';
+ TIRES.forEach((t,i)=>{
+  const vals=keys.map(k=>t.p[k]?calc(k,t.p[k]):null), v=x=>mode==='otd'?x.total:x.tires;
+  const best=Math.min(...vals.filter(Boolean).map(v));
+  h+=`<tr><td class="t"><b>${t.n}</b><span>${t.r}</span></td>`+keys.map((k,j)=>{const x=vals[j];if(!x)return '<td><span class="pnone">Not sold</span></td>';
+   const isBest=v(x)===best&&vals.filter(Boolean).length>1, est=t.p[k][2];
+   return `<td><button class="pcell ${isBest?'best':''} ${sel[0]===i&&sel[1]===k?'on':''}" data-i="${i}" data-k="${k}"><span class="tot">${$m(v(x))}</span>${isBest?'<span class="tag">Lowest</span>':''}<span class="fr">F ${$m(x.f)} · R ${$m(x.r)}${est?' <span class="est">('+est+')</span>':''}</span></button></td>`}).join('')+'</tr>';
+ });
+ document.getElementById('priceTable').innerHTML=h+'</tbody>';
+ document.querySelectorAll('#priceTable .pcell').forEach(b=>b.onclick=()=>{sel=[+b.dataset.i,b.dataset.k];render()});
+ const t=TIRES[sel[0]],x=calc(sel[1],t.p[sel[1]]),c=x.c;
+ document.getElementById('pdTitle').textContent=t.n+' · '+c.n;
+ const L=[[`2 × front @ ${$m(x.f)}`,$m(2*x.f)],[`2 × rear @ ${$m(x.r)}`,$m(2*x.r)],[`Sales tax ${(c.tax*100).toFixed(2).replace(/\.?0+$/,'')}% on tires`,$m(x.tax)],[`Installation (${c.inst[0]===c.inst[1]?'$'+c.inst[0]+'/tire':'$'+c.inst[0]+' F / $'+c.inst[1]+' R'})`,x.inst?$m(x.inst):'Free'],[`Fees (${[c.disp?'disposal $'+c.disp:'',c.fee?'CA tire fee $'+c.fee:'',c.tpms?'TPMS $'+c.tpms:''].filter(Boolean).join(' + ')} × 4)`,$m(x.fees)],['Total, set of 4',$m(x.total)]];
+ document.getElementById('priceDetail').innerHTML=L.map((l,i)=>`<div class="${i===L.length-1?'sum':''}">${l[0]}</div><div class="${i===L.length-1?'sum':''}">${l[1]}</div>`).join('');
+ document.getElementById('pdNote').textContent=(t.p[sel[1]][2]?'Costco shows the front as out of stock with no price; it is assumed to match Walmart\'s $348.07 because the rear price is identical. ':'')+(c.est?'Install and disposal are typical dealer prices, not your quote.':'');
+ document.getElementById('shopCards').innerHTML=Object.values(SHOPS).map(s=>`<div class="card flat"><div class="k">${s.n}</div><ul>${s.rows.map(r=>'<li>'+r+'</li>').join('')}</ul></div>`).join('');
+}
+document.querySelectorAll('#pMode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;document.querySelectorAll('#pMode button').forEach(x=>x.classList.toggle('on',x===b));render()});
+render();
+})();
 </script>
 </body>
 </html>
