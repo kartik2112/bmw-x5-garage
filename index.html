@@ -537,6 +537,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
       <div class="seg" id="pMode"><button data-m="otd" class="on">Out the door</button><button data-m="tires">Tires only</button></div></div>
     <p class="muted" style="font-size:12.5px;line-height:1.55;margin-top:6px">Every option for your 275/40R21 front + 315/35R21 rear, priced at each shop. Tap a price for the line items, or Details for notes. Green is the cheapest shop for that tire. Totals are before rebates. Prices checked Nov 9, 2026.</p>
     <div class="pscroll mt"><table class="ptable" id="priceTable"></table></div>
+    <div class="foot" style="margin-top:6px">* Estimated. Costco's Michelin front is out of stock with no price, so it's assumed to match Walmart's $348.07. America's Tire and BMW dealer totals use typical installation and disposal prices, not a quote.</div>
     <div class="card flat mt" id="priceDetailCard"><div class="k" id="pdTitle">Breakdown</div><div class="pdetail" id="priceDetail"></div><div class="foot" id="pdNote" style="margin-top:8px"></div></div>
     <h3 class="mt2" style="font-size:16px">How each shop charges</h3>
     <div class="shopcards mt" id="shopCards"></div>
@@ -1145,8 +1146,8 @@ function render(){
    const vals=keys.map(k=>t.p[k]?calc(k,t.p[k]):null), v=x=>mode==='otd'?x.total:x.tires, avail=vals.filter(Boolean);
    const best=Math.min(...avail.map(v));
    h+='<tr>'+tc+keys.map((k,j)=>{const x=vals[j];if(!x)return '<td><span class="pnone">Not sold</span></td>';
-    const isBest=v(x)===best&&avail.length>1,note=t.p[k][2];
-    return `<td><button class="pcell ${isBest?'best':''} ${sel[0]===t.id&&sel[1]===k?'on':''}" data-i="${t.id}" data-k="${k}"><span class="tot">${$m(v(x))}</span>${isBest?'<span class="tag">Lowest</span>':''}<span class="fr">F ${$m(x.f)} · R ${$m(x.r)}</span>${note?'<span class="fr est">'+note+'</span>':''}</button></td>`}).join('')+'</tr>';
+    const isBest=v(x)===best&&avail.length>1,estF=t.p[k][2]==='front est.',note=estF?'':t.p[k][2],star=(estF||(mode==='otd'&&SHOPS[k].est))?'*':'';
+    return `<td><button class="pcell ${isBest?'best':''} ${sel[0]===t.id&&sel[1]===k?'on':''}" data-i="${t.id}" data-k="${k}"><span class="tot">${$m(v(x))}${star}</span>${isBest?'<span class="tag">Lowest</span>':''}<span class="fr">F ${$m(x.f)}${estF?'*':''} · R ${$m(x.r)}</span>${note?'<span class="fr est">'+note+'</span>':''}</button></td>`}).join('')+'</tr>';
   })});
  $('#priceTable').innerHTML=h+'</tbody>';
  $$('#priceTable .pcell').forEach(b=>b.onclick=()=>{sel=[b.dataset.i,b.dataset.k];render()});
@@ -1154,10 +1155,10 @@ function render(){
  $$('#priceTable [data-b]').forEach(b=>b.onclick=()=>{toggleBuild(b.dataset.b);if(typeof renderBuild==='function')renderBuild();render()});
  const t=T.find(x=>x.id===sel[0]),x=calc(sel[1],t.p[sel[1]]),c=x.c;
  $('#pdTitle').textContent=t.n+' · '+c.n;
- const L=[[`2 × front @ ${$m(x.f)}`,$m(2*x.f)],[`2 × rear @ ${$m(x.r)}`,$m(2*x.r)],[`Sales tax ${(c.tax*100).toFixed(2).replace(/\.?0+$/,'')}% on tires`,$m(x.tax)],[`Installation (${c.inst[0]===c.inst[1]?'$'+c.inst[0]+'/tire':'$'+c.inst[0]+' F / $'+c.inst[1]+' R'})`,x.inst?$m(x.inst):'Free'],[`Fees (${[c.disp?'disposal $'+c.disp:'',c.fee?'CA tire fee $'+c.fee:'',c.tpms?'TPMS $'+c.tpms:''].filter(Boolean).join(' + ')} × 4)`,$m(x.fees)],['Total, set of 4',$m(x.total)]];
+ const eF=t.p[sel[1]][2]==='front est.',eT=eF||c.est;const L=[[`2 × front @ ${$m(x.f)}${eF?'*':''}`,$m(2*x.f)+(eF?'*':'')],[`2 × rear @ ${$m(x.r)}`,$m(2*x.r)],[`Sales tax ${(c.tax*100).toFixed(2).replace(/\.?0+$/,'')}% on tires`,$m(x.tax)],[`Installation (${c.inst[0]===c.inst[1]?'$'+c.inst[0]+'/tire':'$'+c.inst[0]+' F / $'+c.inst[1]+' R'})`,(x.inst?$m(x.inst):'Free')+(c.est?'*':'')],[`Fees (${[c.disp?'disposal $'+c.disp:'',c.fee?'CA tire fee $'+c.fee:'',c.tpms?'TPMS $'+c.tpms:''].filter(Boolean).join(' + ')} × 4)`,$m(x.fees)],['Total, set of 4',$m(x.total)+(eT?'*':'')]];
  $('#priceDetail').innerHTML=L.map((l,i)=>`<div class="${i===L.length-1?'sum':''}">${l[0]}</div><div class="${i===L.length-1?'sum':''}">${l[1]}</div>`).join('');
  const n=t.p[sel[1]][2];
- $('#pdNote').textContent=[sel[1]==='costco'&&n?'Costco shows the front out of stock with no price; it is assumed to match Walmart\'s $348.07 because the rear price is identical.':(n?'Offer: '+n+' (not taken off the total).':''),c.est?'Installation and disposal are typical prices, not a quote.':''].filter(Boolean).join(' ');
+ $('#pdNote').textContent=[eF?'* Costco shows the front out of stock with no price; it is assumed to match Walmart\'s $348.07 because the rear price is identical.':(n?'Offer: '+n+' (not taken off the total).':''),c.est?'* Installation and disposal are typical prices, not a quote.':''].filter(Boolean).join(' ');
  $('#shopCards').innerHTML=Object.values(SHOPS).map(s=>`<div class="card flat"><div class="k">${s.url?`<a href="${s.url}" target="_blank" rel="noopener">${s.n} ↗</a>`:s.n}</div><ul>${s.rows.map(r=>'<li>'+r+'</li>').join('')}</ul></div>`).join('')+`<div class="card flat"><div class="k">Also checked</div><ul>${OTHER.map(r=>'<li>'+r+'</li>').join('')}</ul></div>`;
 }
 $$('#pMode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('#pMode button').forEach(x=>x.classList.toggle('on',x===b));render()});
