@@ -247,6 +247,8 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
 .pact{display:flex;gap:10px;margin-top:6px}.plink{font-size:11px;color:var(--gold2);padding:0}
 .pnote{font-size:11.5px;color:var(--mute);line-height:1.5;margin-top:6px;max-width:260px}
 .pcell .fr.est{color:var(--warn)}
+.pcell .fr.deal{color:var(--ok)}
+.pnote .pill{white-space:normal;display:inline-block;max-width:100%}
 
 .ptable{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
 .ptable th{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute);font-weight:500;text-align:left;padding:10px 10px;border-bottom:1px solid var(--line2);white-space:nowrap}
@@ -537,7 +539,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
       <div class="seg" id="pMode"><button data-m="otd" class="on">Out the door</button><button data-m="tires">Tires only</button></div></div>
     <p class="muted" style="font-size:12.5px;line-height:1.55;margin-top:6px">Every option for your 275/40R21 front + 315/35R21 rear, priced at each shop. Tap a price for the line items, or Details for notes. Green is the cheapest shop for that tire. Totals are before rebates. Prices checked Nov 9, 2026.</p>
     <div class="pscroll mt"><table class="ptable" id="priceTable"></table></div>
-    <div class="foot" style="margin-top:6px">* Estimated. Costco's Michelin front is out of stock with no price, so it's assumed to match Walmart's $348.07. America's Tire and BMW dealer totals use typical installation and disposal prices, not a quote.</div>
+    <div class="foot" style="margin-top:6px">* Estimated. Costco's Michelin front is out of stock with no price, so it's assumed to match Walmart's $348.07. America's Tire and BMW dealer totals use typical installation and disposal prices, not a quote. Instant savings are included in totals; mail-in rebates are shown separately in green.</div>
     <div class="card flat mt" id="priceDetailCard"><div class="k" id="pdTitle">Breakdown</div><div class="pdetail" id="priceDetail"></div><div class="foot" id="pdNote" style="margin-top:8px"></div></div>
     <h3 class="mt2" style="font-size:16px">How each shop charges</h3>
     <div class="shopcards mt" id="shopCards"></div>
@@ -844,8 +846,8 @@ $('#temp').oninput=e=>renderTemp(+e.target.value);
 /* ---------- CATALOGUE (build items) ---------- */
 const CAT={
  tires:[
-  {id:'t-ps4',n:'Michelin Pilot Sport All Season 4',p:null,q:'See price table',fit:'ok',tag:'',m:''},
-  {id:'t-gy',n:'Goodyear Eagle F1 All Season',p:null,q:'See price table',fit:'ok',tag:'',m:''},
+  {id:'t-ps4',n:'Michelin Pilot Sport All Season 4',p:null,q:'See price table',fit:'ok',tag:'',m:' Reviews: about 3,600 ratings on Tire Rack and 4.4/5 from ~350 reviews at Sam\'s Club. Strongest light-snow results in its class; most common complaint is tread wearing out before 45k miles on heavy cars.'},
+  {id:'t-gy',n:'Goodyear Eagle F1 All Season',p:null,q:'See price table',fit:'ok',tag:'',m:' Reviews: newer tire; won Tire Rack\'s 2026 UHP all-season test (best ride and noise, top overall) but only ~23 owner reviews so far and no published snow test yet.'},
   {id:'t-fk',n:'Falken Azenis FK460 A/S',p:null,q:'See price table',fit:'ok',tag:'',m:''},
   {id:'t-yk',n:'Yokohama Geolandar X-CV',p:null,q:'See price table',fit:'ok',tag:'',m:''},
   {id:'t-kc',n:'Kumho Crugen GT Pro',p:null,q:'See price table',fit:'ok',tag:'',m:''},
@@ -1102,17 +1104,18 @@ const SHOPS={
  bmw:{n:'BMW dealer',where:'Your quote',tax:.10,inst:[55,60],disp:5,fee:1.75,tpms:0,est:true,
   rows:['<b>Tire prices are your BMW quote</b>','<b>Install ≈ $55 front / $60 rear</b> (a Bay Area BMW dealer\'s listed mount & balance)','<b>Disposal ≈ $5 + CA Tire Fee $1.75</b> per tire · <b>Tax 10%</b>','Ask your service advisor for the exact price']}
 };
+const DEALS=['<b>Michelin</b>: $80 Visa card on 4 tires, Sep 3–Nov 30 (submit by Dec 31). Excludes Costco, Walmart, Discount Tire/America\'s Tire and Big O; Tire Rack qualifies.','<b>Goodyear</b>: up to $100 back on 4 tires, Sep 1–Nov 30 (Tire Rack and America\'s Tire show $100 for the Eagle F1 All Season).','<b>America\'s Tire</b>: Early Black Friday Nov 3–16 (up to $150 off select sets, plus $50 online-only); Black Friday page lists Nov 20–Dec 1. Its credit card takes $100 off $799+.','<b>Costco</b>: $80 off Bridgestone and $60 off Firestone sets until Nov 15; nothing on Michelin right now. Last year its Michelin $80-off event ran Nov 17–Dec 1, so check again next week.','<b>Walmart</b>: prices already include rollbacks; Black Friday tire deals usually start in late November.','<b>Tire Rack</b>: no sitewide Black Friday sale advertised; rebates are per tire as shown.','<b>No current rebate found</b>: Falken FK460, Yokohama Geolandar X-CV (fall rebate ended Oct 31), Kumho Crugen GT Pro, Pirelli Scorpion Verde All Season and the budget brands.'];
 const OTHER=['<b>O\'Reilly Auto Parts</b>: doesn\'t sell passenger-car tires (only tire accessories), so there\'s nothing to price.','<b>Les Schwab</b>: nearest store is Fremont, about 15 miles away.','<b>Big O Tires</b>: shows "call store for availability" instead of prices online.'];
 const G=[
  {g:'All-season · M+S (drives through Caltrans R2 on AWD)',t:[
   {id:'t-ps4',n:'Michelin Pilot Sport All Season 4',r:'107Y / 111Y · 45k mi',tag:'Best snow grip of the UHP all-seasons',m:'Same load and speed ratings as your P Zeros. Not run-flat, so carry a repair kit. Light snow only (no 3PMS).',
-   p:{walmart:[348.07,639.99],costco:[348.07,639.99,'front est.'],tirerack:[357.60,639.99,'$80 Visa card w/ 4'],americas:[358.00,640.00],bmw:[346.99,689.99]}},
+   p:{walmart:[348.07,639.99,'Not eligible for Michelin $80 rebate'],costco:[348.07,639.99,'No Michelin deal now; last year $80 off ran Nov 17–Dec 1',0,0,true],tirerack:[357.60,639.99,'Closeout front + $80 Michelin Visa card (to Nov 30)',0,80],americas:[358.00,640.00,'Not eligible for Michelin $80; watch Black Friday'],bmw:[346.99,689.99,'Ask: Michelin $80 applies at participating dealers']}},
   {id:'t-gy',n:'Goodyear Eagle F1 All Season',r:'107Y / 111Y · 45k mi',tag:'UHP all-season',m:'Sportier, cheaper alternative to the Michelin with your exact ratings.',
-   p:{walmart:[298.11,498.99],tirerack:[332.99,498.99,'$100 rebate w/ 4'],americas:[333.00,499.00,'$100 mail rebate + $80 off 4 (to Nov 16)'],bmw:[329.41,488.24]}},
+   p:{walmart:[298.11,498.99,'Rollback (front was $332.99)'],tirerack:[332.99,498.99,'$100 Goodyear rebate (to Nov 30)',0,100],americas:[333.00,499.00,'$80 off set (to Nov 16) + $100 rebate (to Nov 30)',80,100],bmw:[329.41,488.24,'Ask about Goodyear rebate (up to $100, to Nov 30)']}},
   {id:'t-fk',n:'Falken Azenis FK460 A/S',r:'107Y / 111Y · 50k mi',tag:'UHP all-season',m:'Cheapest well-known brand with Y ratings in both sizes.',
    p:{walmart:[290.00,321.00],tirerack:[290.00,326.00],americas:[290.00,326.00]}},
   {id:'t-yk',n:'Yokohama Geolandar X-CV',r:'107W / 111W · 50k mi',tag:'Luxury SUV touring all-season',m:'W = 168 mph, a step below your Y tires but well above the X5\'s 130 mph limit. Tire Rack has only 1 front in stock (more by Dec 2). Walmart sells only the rear.',
-   p:{tirerack:[329.99,418.99,'1 front in stock'],americas:[330.00,419.00]}},
+   p:{tirerack:[329.99,418.99,'1 front in stock; fall rebate ended Oct 31'],americas:[330.00,419.00]}},
   {id:'t-kc',n:'Kumho Crugen GT Pro',r:'107W / 111W · 65k mi',tag:'Touring all-season, longest warranty',m:'New model; few reviews yet. Walmart sells only the rear.',
    p:{tirerack:[241.46,256.24],americas:[242.00,257.00]}},
   {id:'t-vas',n:'Pirelli Scorpion Verde All Season',r:'107V / 111V',tag:'Touring all-season',m:'V-rated (149 mph). America\'s Tire\'s front is the Volvo (VO) version and its rear is the Porsche (N0) version: same tread, different OE marks. Walmart sells only the rear.',
@@ -1122,8 +1125,8 @@ const G=[
   {id:'t-ag',n:'Arroyo Grand Sport A/S',r:'109Y / 111Y',tag:'Budget',m:'Lesser-known brand; few independent tests.',p:{walmart:[135.26,192.93]}},
   {id:'t-cw',n:'Crosswind Ultra Sport Plus',r:'107Y / 111W',tag:'Budget',m:'Cheapest pair. Lesser-known brand.',p:{walmart:[144.06,156.07]}}]},
  {g:'Winter · 3PMSF (best on snow and ice)',t:[
-  {id:'t-sw',n:'Pirelli Scorpion Winter Run Flat',r:'107V / 111V · BMW ★ · run-flat',tag:'BMW-approved winter run-flat',m:'Keeps run-flat like your P Zeros. Swap back to summers in spring.',p:{tirerack:[583.51,846.55,'$100 off a set of 4']}},
-  {id:'t-vw',n:'Vredestein Wintrac Pro+',r:'107W / 111W',tag:'Performance winter',m:'Much cheaper winter option; not run-flat.',p:{tirerack:[306.65,390.39]}}]},
+  {id:'t-sw',n:'Pirelli Scorpion Winter Run Flat',r:'107V / 111V · BMW ★ · run-flat',tag:'BMW-approved winter run-flat',m:'Keeps run-flat like your P Zeros. Swap back to summers in spring.',p:{tirerack:[583.51,846.55,'$100 off set, applied in cart',100,0]}},
+  {id:'t-vw',n:'Vredestein Wintrac Pro+',r:'107W / 111W',tag:'Performance winter',m:'Much cheaper winter option; not run-flat.',p:{tirerack:[306.65,390.39,'$120 Vredestein prepaid card',0,120]}}]},
  {g:'Other options (no matching set price found)',t:[
   {id:'t-hk',n:'Hankook Dynapro evo AS',r:'107Y / 111Y',tag:'All-season',m:'America\'s Tire has the front at $299; none of the shops checked list the 315/35R21 rear. Earlier links: <a href="https://www.tires-easy.com/275-40-21/hankook-tires/dynapro-evo-as-ra21/tirecode/1034945">front (Tires-Easy)</a> · <a href="https://partner-checkout.simpletire.com/tire-sizes/315-35zr21/categories/all-season">rear (SimpleTire)</a>.'},
   {id:'t-20',n:'20″ winter wheel + tire set',r:'275/45R20 · square',tag:'Separate winter set',m:'Cheaper tires, taller sidewalls, and BMW Comfort chains fit. Needs a wheel quote; check caliper clearance if you have M Sport brakes.'},
@@ -1131,35 +1134,35 @@ const G=[
 ];
 const keys=Object.keys(SHOPS), r2=x=>Math.round(x*100)/100, $m=x=>'$'+x.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const T=G.flatMap(g=>g.t);
-function calc(sk,pr){const c=SHOPS[sk],f=pr[0],r=pr[1],tires=2*f+2*r,tax=r2(tires*c.tax),inst=2*c.inst[0]+2*c.inst[1],fees=4*(c.disp+c.fee+c.tpms);return{f,r,tires,tax,inst,fees,c,total:r2(tires+tax+inst+fees)}}
+function calc(sk,pr){const c=SHOPS[sk],f=pr[0],r=pr[1],off=pr[3]||0,mail=pr[4]||0,list=2*f+2*r,tires=list-off,tax=r2(tires*c.tax),inst=2*c.inst[0]+2*c.inst[1],fees=4*(c.disp+c.fee+c.tpms),total=r2(tires+tax+inst+fees);return{f,r,list,off,mail,tires,tax,inst,fees,c,total,net:r2(total-mail)}}
 // feed build list
 T.forEach(t=>{const it=(typeof ALL!=='undefined')&&ALL[t.id];if(!it)return;it.tag=t.tag;it.m=t.m;it.cold=t.id!=='t-pz';
  if(t.p){const best=keys.filter(k=>t.p[k]).map(k=>[k,calc(k,t.p[k]).total]).sort((a,b)=>a[1]-b[1])[0];it.p=best[1];it.q='Set of 4 installed from '+$m(best[1])+' ('+SHOPS[best[0]].n+')'}else{it.p=null;it.q=t.tag}});
-let mode='otd',sel=['t-ps4','costco'],open=null;
+let mode='otd',sel=['t-ps4','costco'];const open=new Set();
 function render(){
  let h='<thead><tr><th>Tire</th>'+keys.map(k=>`<th>${SHOPS[k].n}<span class="sub">${SHOPS[k].where}</span></th>`).join('')+'</tr></thead><tbody>';
  G.forEach(g=>{h+=`<tr class="pgrp"><td colspan="${keys.length+1}">${g.g}</td></tr>`;
   g.t.forEach(t=>{
    const inB=typeof store!=='undefined'&&store.build.includes(t.id);
-   const tc=`<td class="t"><b>${t.n}</b><span>${t.r}</span><div class="pact"><button class="plink" data-o="${t.id}">${open===t.id?'Hide':'Details'}</button><button class="plink" data-b="${t.id}">${inB?'✓ In build':'+ Build'}</button></div>${open===t.id?`<div class="pnote">${t.tag?'<span class="pill info">'+t.tag+'</span> ':''}${t.m}</div>`:''}</td>`;
+   const tc=`<td class="t"><b>${t.n}</b><span>${t.r}</span><div class="pact"><button class="plink" data-o="${t.id}">${open.has(t.id)?'Hide':'Details'}</button><button class="plink" data-b="${t.id}">${inB?'✓ In build':'+ Build'}</button></div>${open.has(t.id)?`<div class="pnote">${t.tag?'<span class="pill info">'+t.tag+'</span> ':''}${t.m}</div>`:''}</td>`;
    if(!t.p){h+=`<tr>${tc}<td colspan="${keys.length}"><span class="pnone">${t.tag}. No set price to compare.</span></td></tr>`;return}
    const vals=keys.map(k=>t.p[k]?calc(k,t.p[k]):null), v=x=>mode==='otd'?x.total:x.tires, avail=vals.filter(Boolean);
    const best=Math.min(...avail.map(v));
    h+='<tr>'+tc+keys.map((k,j)=>{const x=vals[j];if(!x)return '<td><span class="pnone">Not sold</span></td>';
-    const isBest=v(x)===best&&avail.length>1,estF=t.p[k][2]==='front est.',note=estF?'':t.p[k][2],star=(estF||(mode==='otd'&&SHOPS[k].est))?'*':'';
-    return `<td><button class="pcell ${isBest?'best':''} ${sel[0]===t.id&&sel[1]===k?'on':''}" data-i="${t.id}" data-k="${k}"><span class="tot">${$m(v(x))}${star}</span>${isBest?'<span class="tag">Lowest</span>':''}<span class="fr">F ${$m(x.f)}${estF?'*':''} · R ${$m(x.r)}</span>${note?'<span class="fr est">'+note+'</span>':''}</button></td>`}).join('')+'</tr>';
+    const isBest=v(x)===best&&avail.length>1,estF=!!t.p[k][5],note=t.p[k][2],star=(estF||(mode==='otd'&&SHOPS[k].est))?'*':'';
+    return `<td><button class="pcell ${isBest?'best':''} ${sel[0]===t.id&&sel[1]===k?'on':''}" data-i="${t.id}" data-k="${k}"><span class="tot">${$m(v(x))}${star}</span>${isBest?'<span class="tag">Lowest</span>':''}<span class="fr">F ${$m(x.f)}${estF?'*':''} · R ${$m(x.r)}</span>${x.off?'<span class="fr deal">−'+$m(x.off)+' instant, included</span>':''}${x.mail?'<span class="fr deal">'+$m(mode==='otd'?x.net:x.tires-x.mail)+star+' after '+$m(x.mail)+' rebate</span>':''}${note?'<span class="fr est">'+note+'</span>':''}</button></td>`}).join('')+'</tr>';
   })});
  $('#priceTable').innerHTML=h+'</tbody>';
  $$('#priceTable .pcell').forEach(b=>b.onclick=()=>{sel=[b.dataset.i,b.dataset.k];render()});
- $$('#priceTable [data-o]').forEach(b=>b.onclick=()=>{open=open===b.dataset.o?null:b.dataset.o;render()});
+ $$('#priceTable [data-o]').forEach(b=>b.onclick=()=>{const id=b.dataset.o;open.has(id)?open.delete(id):open.add(id);render()});
  $$('#priceTable [data-b]').forEach(b=>b.onclick=()=>{toggleBuild(b.dataset.b);if(typeof renderBuild==='function')renderBuild();render()});
  const t=T.find(x=>x.id===sel[0]),x=calc(sel[1],t.p[sel[1]]),c=x.c;
  $('#pdTitle').textContent=t.n+' · '+c.n;
- const eF=t.p[sel[1]][2]==='front est.',eT=eF||c.est;const L=[[`2 × front @ ${$m(x.f)}${eF?'*':''}`,$m(2*x.f)+(eF?'*':'')],[`2 × rear @ ${$m(x.r)}`,$m(2*x.r)],[`Sales tax ${(c.tax*100).toFixed(2).replace(/\.?0+$/,'')}% on tires`,$m(x.tax)],[`Installation (${c.inst[0]===c.inst[1]?'$'+c.inst[0]+'/tire':'$'+c.inst[0]+' F / $'+c.inst[1]+' R'})`,(x.inst?$m(x.inst):'Free')+(c.est?'*':'')],[`Fees (${[c.disp?'disposal $'+c.disp:'',c.fee?'CA tire fee $'+c.fee:'',c.tpms?'TPMS $'+c.tpms:''].filter(Boolean).join(' + ')} × 4)`,$m(x.fees)],['Total, set of 4',$m(x.total)+(eT?'*':'')]];
- $('#priceDetail').innerHTML=L.map((l,i)=>`<div class="${i===L.length-1?'sum':''}">${l[0]}</div><div class="${i===L.length-1?'sum':''}">${l[1]}</div>`).join('');
+ const eF=!!t.p[sel[1]][5],eT=eF||c.est;const L=[[`2 × front @ ${$m(x.f)}${eF?'*':''}`,$m(2*x.f)+(eF?'*':'')],[`2 × rear @ ${$m(x.r)}`,$m(2*x.r)],...(x.off?[['Instant savings on the set','−'+$m(x.off)]]:[]),[`Sales tax ${(c.tax*100).toFixed(2).replace(/\.?0+$/,'')}% on tires`,$m(x.tax)],[`Installation (${c.inst[0]===c.inst[1]?'$'+c.inst[0]+'/tire':'$'+c.inst[0]+' F / $'+c.inst[1]+' R'})`,(x.inst?$m(x.inst):'Free')+(c.est?'*':'')],[`Fees (${[c.disp?'disposal $'+c.disp:'',c.fee?'CA tire fee $'+c.fee:'',c.tpms?'TPMS $'+c.tpms:''].filter(Boolean).join(' + ')} × 4)`,$m(x.fees)],['Total, set of 4',$m(x.total)+(eT?'*':'')],...(x.mail?[[`After ${$m(x.mail)} rebate (paid later as a card)`,$m(x.net)+(eT?'*':'')]]:[])];
+ $('#priceDetail').innerHTML=L.map(l=>{const sm=/^Total|^After/.test(l[0]);return `<div class="${sm?'sum':''}">${l[0]}</div><div class="${sm?'sum':''}">${l[1]}</div>`}).join('');
  const n=t.p[sel[1]][2];
- $('#pdNote').textContent=[eF?'* Costco shows the front out of stock with no price; it is assumed to match Walmart\'s $348.07 because the rear price is identical.':(n?'Offer: '+n+' (not taken off the total).':''),c.est?'* Installation and disposal are typical prices, not a quote.':''].filter(Boolean).join(' ');
- $('#shopCards').innerHTML=Object.values(SHOPS).map(s=>`<div class="card flat"><div class="k">${s.url?`<a href="${s.url}" target="_blank" rel="noopener">${s.n} ↗</a>`:s.n}</div><ul>${s.rows.map(r=>'<li>'+r+'</li>').join('')}</ul></div>`).join('')+`<div class="card flat"><div class="k">Also checked</div><ul>${OTHER.map(r=>'<li>'+r+'</li>').join('')}</ul></div>`;
+ $('#pdNote').textContent=[eF?'* Costco shows the front out of stock with no price; it is assumed to match Walmart\'s $348.07 because the rear price is identical.':'',n?'Offer: '+n+'.':'',c.est?'* Installation and disposal are typical prices, not a quote.':''].filter(Boolean).join(' ');
+ $('#shopCards').innerHTML=Object.values(SHOPS).map(s=>`<div class="card flat"><div class="k">${s.url?`<a href="${s.url}" target="_blank" rel="noopener">${s.n} ↗</a>`:s.n}</div><ul>${s.rows.map(r=>'<li>'+r+'</li>').join('')}</ul></div>`).join('')+`<div class="card flat" style="grid-column:1/-1"><div class="k">Deals and rebates (checked Nov 9)</div><ul>${DEALS.map(r=>'<li>'+r+'</li>').join('')}</ul></div><div class="card flat"><div class="k">Also checked</div><ul>${OTHER.map(r=>'<li>'+r+'</li>').join('')}</ul></div>`;
 }
 $$('#pMode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('#pMode button').forEach(x=>x.classList.toggle('on',x===b));render()});
 render();
