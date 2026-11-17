@@ -382,8 +382,8 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
   </div>
 
   <div class="grid g3 mt">
-    <div class="card"><div class="k">Horsepower</div><div class="v">375<small>hp</small></div><div class="muted mt" style="font-size:12px">@ 5,200–6,250 rpm</div></div>
-    <div class="card"><div class="k">Torque</div><div class="v">398<small>lb-ft</small></div><div class="muted mt" style="font-size:12px">@ 1,850–5,000 rpm</div></div>
+    <div class="card"><div class="k">Horsepower</div><div class="v">375<small>bhp</small></div><div class="muted mt" style="font-size:12px">280 kW · @ 5,200–6,250 rpm</div></div>
+    <div class="card"><div class="k">Torque</div><div class="v">398<small>lb-ft</small></div><div class="muted mt" style="font-size:12px">540 Nm · @ 1,850–5,000 rpm</div></div>
     <div class="card"><div class="k">0–60 mph</div><div class="v">5.2–5.3<small>s</small></div><div class="muted mt" style="font-size:12px">Top speed 130 mph (governed)</div></div>
   </div>
   <details class="sources"><summary>Sources</summary><ul>
@@ -553,6 +553,21 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
     <div class="verdict" id="tempV"></div>
     <div id="tempTable" class="mt"></div>
     <div class="foot">Sources: Pirelli (P Zero below 45°F/7°C; Scorpion Winter built for below 7°C), Hankook, Michelin and Tire Rack product pages and spec listings (M+S vs 3PMS ratings). "Light snow" means M+S only, not certified for severe snow.</div>
+  </div>
+  <div class="card mt2" id="purchaseCard" style="border-color:var(--gold2)">
+    <div class="row between" style="flex-wrap:wrap;gap:10px"><h3 style="margin:0">✓ Purchased: Michelin Pilot Sport All Season 4</h3><span class="mono" style="color:var(--gold2)">Walmart · Nov 11, 2026</span></div>
+    <p class="muted" style="font-size:12.5px;line-height:1.55;margin-top:6px">Set of 4 bought at the listed prices. Installation not yet paid.</p>
+    <div class="pscroll mt"><table class="ptable">
+      <thead><tr><th>Item</th><th>Front 275/40R21 107Y ×2</th><th>Rear 315/35R21 111Y ×2</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td class="t"><b>Tires</b></td><td>$696.14 <span class="muted">($348.07 ea)</span></td><td>$1,279.98 <span class="muted">($639.99 ea)</span></td><td>$1,976.12</td></tr>
+        <tr><td class="t"><b>Sales tax 10%</b></td><td>$69.61</td><td>$128.00</td><td>$197.61</td></tr>
+        <tr><td class="t"><b>CA Tire Fee $1.75/tire</b></td><td>$3.50</td><td>$3.50</td><td>$7.00</td></tr>
+        <tr><td class="t"><b>Paid (before install)</b></td><td><b>$769.25</b></td><td><b>$1,411.48</b></td><td><b>$2,180.73</b></td></tr>
+        <tr><td class="t"><b>Install (expected)</b></td><td>$36.00</td><td>$36.00</td><td>≈ $72.00</td></tr>
+        <tr><td class="t"><b>Out the door (expected)</b></td><td>≈ $805.25</td><td>≈ $1,447.48</td><td><b>≈ $2,252.73</b></td></tr>
+      </tbody></table></div>
+    <div class="foot" style="margin-top:6px">Install estimate is Walmart's $18/tire package (Nov 9 listing). Walmart purchases aren't eligible for Michelin's $80 Visa card. Not run-flat: carry a plug kit + inflator. Some Walmart stores lack equipment for low-profile 21″ tires, so confirm with the store before the appointment. Keep the P Zero run-flats for spring.</div>
   </div>
   <div class="card mt2" id="priceCard">
     <div class="row between" style="flex-wrap:wrap;gap:10px"><h3 style="margin:0">What a set of 4 costs, installed</h3>
@@ -846,13 +861,13 @@ $$('#v-cargo [data-p]').forEach(b=>b.onclick=()=>{folded=b.dataset.p.split('').m
 /* ---------- SPECS ---------- */
 const SPECS=[
  ['Powertrain','Engine','B58 3.0 L TwinPower Turbo I6, 48V mild hybrid','BMW USA'],['Powertrain','Displacement','2,998 cc','BMW USA'],['Powertrain','Bore × stroke','82.0 × 94.6 mm','BMW press'],['Powertrain','Compression','11.0 : 1','BMW dealer'],
- ['Powertrain','Horsepower','375 hp @ 5,200–6,250 rpm','BMW USA'],['Powertrain','Torque','398 lb-ft @ 1,850–5,000 rpm','BMW dealer'],['Powertrain','Transmission','8-speed Steptronic Sport automatic','BMW dealer'],['Powertrain','Drive','xDrive all-wheel drive','—'],['Powertrain','Valve timing','VALVETRONIC + Double-VANOS; timing chain','BMW press'],
+ ['Powertrain','Horsepower','375 hp = 375 bhp (280 kW) @ 5,200–6,250 rpm','BMW USA'],['Powertrain','Torque','398 lb-ft (540 Nm) @ 1,850–5,000 rpm','BMW USA / Encycarpedia'],['Powertrain','Recommended fuel (US)','Premium unleaded, 91 AKI recommended · 89 AKI minimum · Top Tier brands. Check the fuel-door label','BMW Owner\'s Manual / KBB'],['Powertrain','Transmission','8-speed Steptronic Sport automatic','BMW dealer'],['Powertrain','Drive','xDrive all-wheel drive','—'],['Powertrain','Valve timing','VALVETRONIC + Double-VANOS; timing chain','BMW press'],
  ['Performance','0–60 mph','5.2–5.3 s','BMW dealer / KBB'],['Performance','Top speed','130 mph (limited)','BMW USA'],['Performance','EPA economy','23 city / 27 hwy mpg','BMW USA'],
  ['Capacities','Fuel tank','21.9 gal','BMW USA'],['Capacities','Engine oil','≈ 6.5 L (≈ 6.9 qt), confirm at service','BMW press'],['Capacities','Cargo, seats up','33.9 ft³ (960 L)','CarGurus / BMW'],['Capacities','Cargo, seats folded','72.3 ft³ (2,047 L)','CarGurus / BMW'],['Capacities','Towing','7,200 lb','BMW dealer'],['Capacities','Payload','1,058 lb','BMW dealer'],
  ['Dimensions','Length','194.2 in','BMW USA'],['Dimensions','Width','78.9 in','BMW USA'],['Dimensions','Height','69.5 in','BMW USA'],['Dimensions','Wheelbase','117.1 in (2,975 mm)','BMW press'],['Dimensions','Ground clearance','8.3 in','iSeeCars'],['Dimensions','Curb weight','4,998 lb','Edmunds'],
  ['Cabin','Seating','5 · 40/20/40 split rear','CarGurus'],['Cabin','Front / rear legroom','39.8 / 37.4 in','BMW dealer'],['Cabin','Front / rear headroom','40.8 / 38.7 in','Dealer listing'],['Cabin','Displays','12.3″ cluster + 14.9″ touchscreen (Curved Display)','CarGurus'],
  ['Electrical','12V battery','Under the cargo floor; jump post in the engine bay','BMW press'],['Lighting','Headlights','Adaptive full LED (std from MY25)','Carvana / dealers'],
- ['Wheels','Your tires','F 275/40R21 107Y XL · R 315/35R21 111Y XL','Your car']];
+ ['Wheels','Your tires','F 275/40R21 107Y XL · R 315/35R21 111Y XL','Your car'],['Wheels','Tire pressure (cold)','F 36 psi (2.5 bar) · R 42 psi (2.9 bar), normal load. Door-jamb label is final','TirePressure.com / Firestone']];
 function renderSpecs(q=''){q=q.toLowerCase();let last='',h='';SPECS.filter(s=>s.join(' ').toLowerCase().includes(q)).forEach(s=>{if(s[0]!==last){h+=`<tr><td colspan="3" style="padding-top:16px;border:0"><span class="k" style="color:var(--gold)">${s[0]}</span></td></tr>`;last=s[0]}h+=`<tr><td class="muted">${s[1]}</td><td>${s[2]}</td><td class="r dim">${s[3]}</td></tr>`});$('#specBody').innerHTML=h||'<tr><td class="muted">No match.</td></tr>'}
 $('#specQ').oninput=e=>renderSpecs(e.target.value);
 
@@ -1250,7 +1265,7 @@ const BF=['<b>Prices rarely rise before Black Friday.</b> I found no sign shops 
 const OTHER=['<b>O\'Reilly Auto Parts</b>: doesn\'t sell passenger-car tires (only tire accessories), so there\'s nothing to price.','<b>Les Schwab</b>: nearest store is Fremont, about 15 miles away.','<b>Big O Tires</b>: shows "call store for availability" instead of prices online.'];
 const G=[
  {g:'All-season · M+S (drives through Caltrans R2 on AWD)',t:[
-  {id:'t-ps4',n:'Michelin Pilot Sport All Season 4',r:'107Y / 111Y · 45k mi',tag:'Best snow grip of the UHP all-seasons',m:'Same load and speed ratings as your P Zeros. Not run-flat, so carry a repair kit. Light snow only (no 3PMS).',
+  {id:'t-ps4',n:'Michelin Pilot Sport All Season 4',r:'107Y / 111Y · 45k mi',tag:'✓ Purchased Nov 11, 2026 (Walmart, $2,180.73 before install)',m:'Same load and speed ratings as your P Zeros. Not run-flat, so carry a repair kit. Light snow only (no 3PMS).',
    p:{walmart:[348.07,639.99,'Not eligible for Michelin $80 rebate'],costco:[348.07,639.99,'No Michelin deal now; last year $80 off ran Nov 17–Dec 1',0,0,true],tirerack:[357.60,639.99,'Closeout front + $80 Michelin Visa card (to Nov 30)',0,80],americas:[358.00,640.00,'Not eligible for Michelin $80; watch Black Friday'],bmw:[346.99,689.99,'Ask: Michelin $80 applies at participating dealers']}},
   {id:'t-gy',n:'Goodyear Eagle F1 All Season',r:'107Y / 111Y · 45k mi',tag:'UHP all-season',m:'Sportier, cheaper alternative to the Michelin with your exact ratings.',
    p:{walmart:[298.11,498.99,'Rollback (front was $332.99)'],tirerack:[332.99,498.99,'$100 Goodyear rebate (to Nov 30)',0,100],americas:[333.00,499.00,'$80 off set (to Nov 16) + $100 rebate (to Nov 30)',80,100],bmw:[329.41,488.24,'Ask about Goodyear rebate (up to $100, to Nov 30)']}},
@@ -1280,7 +1295,7 @@ function calc(sk,pr){const c=SHOPS[sk],f=pr[0],r=pr[1],off=pr[3]||0,mail=pr[4]||
 // feed build list
 T.forEach(t=>{const it=(typeof ALL!=='undefined')&&ALL[t.id];if(!it)return;it.tag=t.tag;it.m=t.m;it.cold=t.id!=='t-pz';
  if(t.p){const best=keys.filter(k=>t.p[k]).map(k=>[k,calc(k,t.p[k]).total]).sort((a,b)=>a[1]-b[1])[0];it.p=best[1];it.q='Set of 4 installed from '+$m(best[1])+' ('+SHOPS[best[0]].n+')'}else{it.p=null;it.q=t.tag}});
-let mode='otd',sel=['t-ps4','costco'];const open=new Set();
+let mode='otd',sel=['t-ps4','walmart'];const open=new Set();
 function render(){
  let h='<thead><tr><th>Tire</th>'+keys.map(k=>`<th>${SHOPS[k].n}<span class="sub">${SHOPS[k].where}</span></th>`).join('')+'</tr></thead><tbody>';
  G.forEach(g=>{h+=`<tr class="pgrp"><td colspan="${keys.length+1}">${g.g}</td></tr>`;
@@ -1312,3 +1327,4 @@ render();
 </script>
 </body>
 </html>
+
