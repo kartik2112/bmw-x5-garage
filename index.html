@@ -348,7 +348,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
         <div>Wheels</div><div>21″ staggered</div>
         <div>Front tire</div><div>275/40 R21 107Y XL<button class="ib" onclick="openTire('f')" aria-label="Explain front tire">i</button></div>
         <div>Rear tire</div><div>315/35 R21 111Y XL<button class="ib" onclick="openTire('r')" aria-label="Explain rear tire">i</button></div>
-        <div>Tire model</div><div>Pirelli P Zero (summer, RFT)</div>
+        <div>Tire model</div><div id="gTireModel">Pirelli P Zero (summer, RFT)</div>
       </div>
     </div>
   </div>
@@ -506,8 +506,13 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
 
 <!-- ============ WHEELS & TIRES (explore) ============ -->
 <section class="view" id="v-wheels">
-  <h2><small>Your wheels &amp; tires</small>21″ staggered · Pirelli P Zero</h2>
-  <p class="lead">Your current setup: 275/40 R21 107Y XL front and 315/35 R21 111Y XL rear, Pirelli P Zero summer run-flats. The rears are 40 mm wider, but front and rear stand almost exactly the same height, which xDrive needs. Tap a wheel or each part of the tire code to see what it means. Replacement options and prices are in the Workshop's Tires tab.</p>
+  <h2><small>Your wheels &amp; tires</small>21″ staggered · <span id="whName">Pirelli P Zero</span></h2>
+  <p class="lead" id="whLead"></p>
+  <div class="card mt" id="tireSetCard">
+    <div class="row between" style="flex-wrap:wrap;gap:10px"><h3 style="margin:0">Which tires are on the car?</h3><div class="seg" id="segSet"><button data-s="pz">Pirelli P Zero</button><button data-s="ps4">Michelin PS All Season 4</button></div></div>
+    <div class="kv mt" id="setKV"></div>
+    <div class="foot" id="setFoot"></div>
+  </div>
   <div class="mount2" id="wheelsMount"></div>
 </section>
 
@@ -727,7 +732,7 @@ td.r{text-align:right;font-family:var(--mono);font-size:12px}
 <div class="tm" id="tm" onclick="if(event.target===this)closeTire()"><div class="box">
   <button class="x" onclick="closeTire()">✕</button>
   <div class="eyebrow">Your tire, decoded</div>
-  <div class="row between" style="margin-top:6px"><div class="seg" id="tmAxle"><button data-a="f">Front</button><button data-a="r">Rear</button></div><span class="muted" style="font-size:11px">Pirelli P Zero · summer · run-flat</span></div>
+  <div class="row between" style="margin-top:6px"><div class="seg" id="tmAxle"><button data-a="f">Front</button><button data-a="r">Rear</button></div><span class="muted" style="font-size:11px" id="tmLabel">Pirelli P Zero · summer · run-flat</span></div>
   <div class="tcode" id="tcode"></div>
   <svg id="tsvg" viewBox="0 0 640 300" style="width:100%;display:block;border-radius:16px;background:radial-gradient(90% 90% at 40% 40%,#1c2535,#0b0f17)"></svg>
   <div class="explain mt" id="tmx"></div>
@@ -873,13 +878,36 @@ $('#specQ').oninput=e=>renderSpecs(e.target.value);
 
 /* ---------- TIRES ---------- */
 const TIRES={f:{w:275,a:40,d:21,li:107,sr:'Y'},r:{w:315,a:35,d:21,li:111,sr:'Y'}};
+/* ---------- TIRE SET (P Zero vs Pilot Sport AS4) ---------- */
+const TSETS={
+ pz:{name:'Pirelli P Zero',label:'Pirelli P Zero · summer · run-flat',garage:'Pirelli P Zero (summer, RFT)',zr:false,ms:false,
+  lead:'Your setup: 275/40 R21 107Y XL front and 315/35 R21 111Y XL rear, Pirelli P Zero summer run-flats. The rears are 40 mm wider, but front and rear stand almost exactly the same height, which xDrive needs. Tap a wheel or each part of the tire code to see what it means. Replacement options and prices are in the Workshop\'s Tires tab.',
+  kv:[['Type','Summer, run-flat (RFT)'],['Front','275/40 R21 107Y XL'],['Rear','315/35 R21 111Y XL'],['Snow marking','None (no M+S): chains needed at a Caltrans R2 checkpoint'],['Cold weather','Pirelli: grip drops below 45°F (7°C)'],['After a puncture','Run-flat: you can keep driving at reduced speed to a shop'],['Cold pressure','F 36 psi (2.5 bar) · R 42 psi (2.9 bar)'],['Status','Installed']],
+  foot:'Pressures are for normal load. The door-jamb label on your car is final.'},
+ ps4:{name:'Michelin Pilot Sport All Season 4',label:'Michelin Pilot Sport AS4 · all-season · not run-flat',garage:'Michelin Pilot Sport All Season 4 (all-season)',zr:true,ms:true,
+  lead:'Your setup: 275/40 ZR21 107Y XL front and 315/35 ZR21 111Y XL rear, Michelin Pilot Sport All Season 4. Same sizes, load and speed ratings as the P Zeros, so the wheels, xDrive height match and pressures don\'t change. Tap a wheel or each part of the tire code to see what it means.',
+  kv:[['Type','All-season, not run-flat'],['Front','275/40 ZR21 107Y XL'],['Rear','315/35 ZR21 111Y XL'],['Snow marking','M+S, no 3PMS: AWD passes Caltrans R2, but carry chains. Light snow only'],['Cold weather','Compound stays flexible in the cold'],['After a puncture','Not run-flat: carry a plug kit and inflator'],['Treadwear warranty','45,000 miles'],['Cold pressure','F 36 psi (2.5 bar) · R 42 psi (2.9 bar)'],['Status','Purchased Nov 11, 2026 (Walmart). Install pending']],
+  foot:'Pressures are for normal load. The door-jamb label on your car is final. Details from Michelin and Tire Rack listings; purchase from the Workshop\'s Tires tab.'}};
+let tSet='pz';try{const v=localStorage.getItem('x5TireSet');if(v&&TSETS[v])tSet=v}catch(e){}
+function applyTireSet(){const s=TSETS[tSet];
+ $$('#segSet button').forEach(b=>b.classList.toggle('on',b.dataset.s===tSet));
+ $('#whName').textContent=s.name;$('#whLead').textContent=s.lead;
+ $('#setKV').innerHTML=s.kv.map(r=>`<div>${r[0]}</div><div>${r[1]}</div>`).join('');$('#setFoot').textContent=s.foot;
+ const g=document.getElementById('gTireModel');if(g)g.textContent=s.garage;
+ const l=document.getElementById('tmLabel');if(l)l.textContent=s.label;const w3f=document.getElementById('w3f'),w3r=document.getElementById('w3r');if(w3f)w3f.textContent='FRONT · 275/40 '+(s.zr?'ZR21':'R21');if(w3r)w3r.textContent='REAR · 315/35 '+(s.zr?'ZR21':'R21');
+ const fc=n=>n.replace(' R21',s.zr?' ZR21':' R21');
+ if(SHEETS.tires){SHEETS.tires.t='21″ staggered · '+(tSet==='pz'?'P Zero':'Pilot Sport AS4');SHEETS.tires.b=`<div class="kv"><div>Front</div><div>${fc('275/40 R21')} 107Y XL</div><div>Rear</div><div>${fc('315/35 R21')} 111Y XL</div><div>Type</div><div>${s.kv[0][1]}</div></div><p class="muted mt" style="line-height:1.6">${s.ms?'M+S marked, so they count as snow-rated tires at a Caltrans R2 checkpoint on an AWD car.':'No M+S marking, so they don\'t count as snow tires at a Caltrans R2 checkpoint.'}</p>`}
+ const want=s.ms?'snow':'summer';const tb=document.querySelector(`#segTire button[data-x="${want}"]`);if(tb&&typeof tireT!=='undefined'&&tireT!==want)tb.click();
+ renderDec();const de=document.getElementById('decExplain');if(de)de.textContent='Tap any segment.';
+ if(document.getElementById('tm').classList.contains('on'))drawTire()}
+$$('#segSet button').forEach(b=>b.onclick=()=>{tSet=b.dataset.s;try{localStorage.setItem('x5TireSet',tSet)}catch(e){};applyTireSet()});
 const LI={107:'975 kg (2,149 lb)',111:'1,090 kg (2,403 lb)'};
 let axle='f';
-function renderDec(){const t=TIRES[axle];const parts=[[t.w,'w'],['/',''],[t.a,'a'],[' R','R'],[t.d,'d'],[' '+t.li,'li'],[t.sr,'sr'],[' XL','xl']];
+function renderDec(){const t=TIRES[axle];const parts=[[t.w,'w'],['/',''],[t.a,'a'],[TSETS[tSet].zr?' ZR':' R','R'],[t.d,'d'],[' '+t.li,'li'],[t.sr,'sr'],[' XL','xl']];
  $('#decoder').innerHTML=parts.map(p=>p[1]?`<span data-k="${p[1]}">${p[0]}</span>`:`<i style="font-style:normal;color:var(--dim)">${p[0]}</i>`).join('');
  const sw=t.w*t.a/100;const E={w:`<b>${t.w} mm</b> section width, about ${(t.w/25.4).toFixed(1)} in across.${axle==='r'?' The rears are 40 mm wider than the fronts.':''}`,
   a:`<b>Aspect ratio ${t.a}.</b> Sidewall height is ${t.a}% of the width: ${sw.toFixed(1)} mm (${(sw/25.4).toFixed(2)} in). That short sidewall is why 21″ wheels feel sharp to steer but pick up curb rash easily.`,
-  R:'<b>R = radial construction.</b> Every modern car tire is radial.',d:`<b>Fits a 21-inch wheel.</b> The X5 xDrive40i comes on 20″ wheels as standard (275/45R20), so your 21s are an upgrade.`,
+  R:TSETS[tSet].zr?'<b>ZR = radial, rated above 149 mph.</b> Michelin prints ZR on the Pilot Sport AS4. The Y after the load index sets the exact limit: 186 mph.':'<b>R = radial construction.</b> Every modern car tire is radial.',d:`<b>Fits a 21-inch wheel.</b> The X5 xDrive40i comes on 20″ wheels as standard (275/45R20), so your 21s are an upgrade.`,
   li:`<b>Load index ${t.li}</b>: each tire can carry up to ${LI[t.li]}.`,sr:'<b>Speed rating Y</b>: up to 186 mph. Some all-season and winter options are V-rated (149 mph). Your car is governed at 130 mph, but some shops will still refuse to fit a lower rating than the original.',
   xl:'<b>XL = Extra Load.</b> A reinforced build that runs at higher inflation pressure. Heavy SUVs like the X5 need it.'};
  $$('#decoder span').forEach(s=>s.onclick=()=>{$$('#decoder span').forEach(x=>x.classList.toggle('on',x===s));$('#decExplain').innerHTML=E[s.dataset.k]})}
@@ -1143,7 +1171,7 @@ let tAx='f',tIdx=0;
 function tSegs(t){const sw=t.w*t.a/100,dia=t.d*25.4+2*sw;return[
  {k:'w',txt:String(t.w),focus:['tread'],dl:['dw'],x:`<b>${t.w} mm wide</b>: the tread measures ${t.w} mm (${(t.w/25.4).toFixed(1)} in) across, shown on the cross-section.${t.w===315?' The rears are 40 mm wider than the fronts because the rear axle carries more of the drive force.':''}`},
  {k:'a',txt:'/'+t.a,focus:['side'],dl:['dh'],x:`<b>Aspect ratio ${t.a}</b>: sidewall height is ${t.a}% of the width, so ${t.a/100} × ${t.w} = <b>${sw.toFixed(0)} mm</b> (${(sw/25.4).toFixed(2)} in). That short sidewall makes steering sharp, but it also makes the 21″ rims easy to curb.`},
- {k:'R',txt:' R',focus:['ply'],dl:[],x:'<b>R = radial construction.</b> The body cords run straight out from the center like spokes (highlighted), with steel belts under the tread. Every modern car tire is built this way.'},
+ {k:'R',txt:TSETS[tSet].zr?' ZR':' R',focus:['ply'],dl:[],x:'<b>R = radial construction.</b> The body cords run straight out from the center like spokes (highlighted), with steel belts under the tread. Every modern car tire is built this way.'},
  {k:'d',txt:'21',focus:['rim'],dl:['dr','dd'],x:`<b>Fits a 21-inch wheel</b>: the rim is 533 mm across. Add a sidewall on each side and the whole tire is <b>${dia.toFixed(0)} mm (${(dia/25.4).toFixed(1)} in)</b> tall. Front and rear are within 0.5 mm of each other, which xDrive needs.`},
  {k:'li',txt:' '+t.li,focus:['tread','side','ply','rim'],dl:['dl'],x:`<b>Load index ${t.li}</b>: each tire can carry up to <b>${t.lb}</b> at the right pressure.`},
  {k:'sr',txt:'Y',focus:['tread'],dl:['ds'],x:'<b>Speed rating Y</b>: rated up to <b>186 mph (300 km/h)</b>. Your X5 is limited to 130 mph, so there\'s plenty of margin.'},
@@ -1192,7 +1220,7 @@ $('#tmPrev').onclick=()=>{tIdx=(tIdx+6)%7;tFocus()};$('#tmNext').onclick=()=>{tI
 $$('#tmAxle button').forEach(b=>b.onclick=()=>{tAx=b.dataset.a;drawTire()});
 
 /* init */
-renderSpecs();renderDec();renderTemp(55);renderLaw();renderStrap(30);renderBoards();updCargo();$('#fExplain').innerHTML=FEX.low;refreshLists();updCount();setRpm(0);animStats();
+renderSpecs();applyTireSet();renderTemp(55);renderLaw();renderStrap(30);renderBoards();updCargo();$('#fExplain').innerHTML=FEX.low;refreshLists();updCount();setRpm(0);animStats();
 const h=(location.hash||'').slice(1);if(h&&$('#v-'+h))go(h);
 </script>
 <script>
